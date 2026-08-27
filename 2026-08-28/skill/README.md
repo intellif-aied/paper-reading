@@ -68,7 +68,7 @@ Claude Code 与 Codex 使用不同的会话源和 Skill discovery root：
 > [!IMPORTANT]
 > XSkill 源码只能证明“目录被放进 discovery root”。什么时候扫描目录、如何把 `SKILL.md` 加进模型上下文，属于 Codex / Claude Code 自己的实现，不能从 XSkill 源码继续外推。
 
-<details>
+<details markdown="1">
 <summary><strong>展开源码入口：init、connect 与 installer</strong></summary>
 
 - `xskill init`：[`src/xskill/cli.py:179`](https://github.com/SkillNerds/xskill/blob/bc9bf941662467ac711523e450968f2677cd230e/src/xskill/cli.py#L179)；检测本机 ecosystem，并安装随包附带的 `/xskill` 使用指南。
@@ -103,7 +103,7 @@ Team 模式在客户端上传前再叠加两道门槛：
 
 它们是顺序门槛，不是三个取最大值的并行 timer。
 
-<details>
+<details markdown="1">
 <summary><strong>展开实现：Adapter 如何统一 Claude 与 Codex</strong></summary>
 
 公共入口 [`adapt_trajectory`](https://github.com/SkillNerds/xskill/blob/bc9bf941662467ac711523e450968f2677cd230e/src/xskill/ecosystems/_shared.py#L529) 根据 `TrajectorySpec.format` 分派 adapter，随后 [`submit_trajectory`](https://github.com/SkillNerds/xskill/blob/bc9bf941662467ac711523e450968f2677cd230e/src/xskill/ecosystems/_shared.py#L674) 执行 sanitize / mask，并原子写出：
@@ -117,7 +117,7 @@ Claude adapter 只保留 user / assistant / tool 相关事件，跳过 thinking�
 
 </details>
 
-<details>
+<details markdown="1">
 <summary><strong>展开隐私边界：Team client 在哪里脱敏</strong></summary>
 
 Team collector 在上传前替换 PEM、secret detector 命中、`sk-`、敏感关键字和环境变量赋值，统一变成 `[REDACTED]`。服务端再验证 trajectory ID 与 SHA，并先写 sidecar、后写 Markdown，最后注册 watch directory。
@@ -148,7 +148,7 @@ Trajectory
 
 从算法视角，这不是一次 summarization，而是“语义分段 + 表征 + catalog-conditioned routing + 有证据阈值的生成”。
 
-<details>
+<details markdown="1">
 <summary><strong>展开源码状态机：Trajectory 如何走到 done</strong></summary>
 
 `DirectoryWatcher` 的持久状态主线是：
@@ -187,7 +187,7 @@ Weightscore 是启发式证据权重，不应解释成经过校准的概率。�
 
 因此 Canary 不是“让 LLM 看两份 `SKILL.md` 后选一份”，而是把真实 session 稳定分配到 Main / Staging，记录它实际使用的 side 和 SHA，再根据版本绑定的 UX 证据收敛。
 
-<details>
+<details markdown="1">
 <summary><strong>展开概念：Baby、Main、Staging、Jam、User Staging</strong></summary>
 
 - **Baby**：新生 Skill 的首个不可分发组装态，不是 Staging。
@@ -212,7 +212,7 @@ Git 状态入口：新 Skill 初始化 [`init_skill_repo_on_baby`](https://githu
 
 Team 服务端不会远程修改客户端的 Claude / Codex 目录。它只声明：“这个 client 应该使用 Skill X 的 side Y、commit Z。”客户端拉 bundle、更新 refs、checkout 到目标 SHA，检查是否存在未上传的用户修改，最后才调用同一套 ecosystem installer。
 
-<details>
+<details markdown="1">
 <summary><strong>展开实现：Manifest 与 Reconcile</strong></summary>
 
 - 服务端 catalog / side 选择：[`build_manifest`](https://github.com/SkillNerds/xskill/blob/bc9bf941662467ac711523e450968f2677cd230e/src/xskill/team/server/skill_manifest.py#L310)。
