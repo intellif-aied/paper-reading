@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "trial_id": "claude-minimax-xskill-20260825",
+  "t0_utc": "2026-08-25T08:27:25Z",
+  "repo_commit": "bc9bf941662467ac711523e450968f2677cd230e",
+  "environment": {
+    "xskill_version": "0.0.1.dev1+unknown.gbc9bf9416",
+    "python_version": "3.13.14",
+    "claude_code_version": "2.1.204",
+    "observed_model_id": "MiniMax-M3-MXFP8",
+    "herdr_pane": "w2:p3",
+    "isolated_workload": "/tmp/xskill-minimax-trial-20260825/workload"
+  },
+  "installation": {
+    "resolved_packages": 53,
+    "prepared_packages": 39,
+    "prepare_seconds": 126,
+    "install_seconds": 1.25,
+    "claude_xskill_install_mode": "symlink",
+    "config_template_bytes": 14766
+  },
+  "native_session": {
+    "session_id": "1bc5c4df-268e-4e31-a02b-47d759294a0c",
+    "started_at": "2026-08-25T08:31:27.000Z",
+    "finished_at": "2026-08-25T08:48:30.734Z",
+    "duration_seconds": 1023.734,
+    "bytes": 792658,
+    "jsonl_lines": 218,
+    "assistant_events": 91,
+    "user_events": 56,
+    "permission_mode_events": 12,
+    "tool_calls": 44,
+    "tool_names": {
+      "Bash": 25,
+      "Read": 14,
+      "Edit": 3,
+      "Skill": 2
+    },
+    "skill_calls": {
+      "diagnosing-bugs": 1,
+      "tdd": 1
+    },
+    "usage": {
+      "input_tokens": 7223652,
+      "output_tokens": 22137,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    },
+    "sha256": "72ec5d13768e432d5ed58303bb939a90f7e8afb890b1e5725148920aaab24d58"
+  },
+  "workload": {
+    "initial_debug_test": "30 passed in 17.78s",
+    "tdd_red": "2 failed, 1 passed",
+    "tdd_green": "41 passed in 13.38s",
+    "warm_sanity": "30 passed in 3.91s",
+    "independent_verification": "71 passed in 14.29s",
+    "changed_files": 2,
+    "source_insertions": 17,
+    "test_insertions": 102,
+    "diff_sha256": "73cd4328ef8944b9b91a81389afe761bcdfd2f3114dd4e0209076eb4b3b4d178"
+  },
+  "bridge": {
+    "status": "stored",
+    "trajectory_id": "traj_cc_workload_1bc5c4df",
+    "latency_seconds_from_final_source_mtime": 135.131,
+    "markdown_bytes": 88672,
+    "sidecar_bytes": 181903,
+    "model": "MiniMax-M3-MXFP8",
+    "total_turns": 146,
+    "total_tool_calls": 44,
+    "validation": {
+      "valid": true,
+      "user_intent_count": 14
+    },
+    "has_canary_attribution_header": false,
+    "markdown_sha256": "aea448d6cd210bec8e694ae1b1edf28b06beb5d986a830fadcf4d24202b8d3b2",
+    "sidecar_sha256": "ab21b0eac65c9b1e2ce54dae96e539f604326fcb571c3222991ee3bbeb678b4f"
+  },
+  "api_compatibility": {
+    "minimax_models": {"status": 200, "elapsed_ms": 331.0},
+    "minimax_anthropic_messages": {"status": 200, "elapsed_ms": 485.8},
+    "minimax_openai_chat": {"status": 200, "elapsed_ms": 479.5},
+    "minimax_openai_tool_call": {
+      "status": 200,
+      "elapsed_ms": 1616.6,
+      "model_alias": "MiniMax-M3",
+      "expected_tool_calls": 1,
+      "observed_tool_calls": 1
+    },
+    "minimax_embedding": {"status": 400, "elapsed_ms": 77.2},
+    "qwen_embedding": {
+      "status": 200,
+      "elapsed_ms": 177.5,
+      "model": "qwen3-vl-embedding",
+      "dimension": 4096,
+      "usage_tokens": 6,
+      "real_trajectory_probe": {
+        "characters": 1200,
+        "elapsed_ms": 2692.4,
+        "dimension": 4096,
+        "all_finite": true,
+        "pipeline_stage": "out_of_band_compatibility_probe"
+      }
+    }
+  },
+  "pipeline": {
+    "daemon_running_at_end": false,
+    "isolated_home": "/tmp/xskill-minimax-pipeline-20260825-cAGeaT",
+    "daemon_ready_at": "2026-08-25T09:07:03Z",
+    "bridge_at": "2026-08-25T09:07:04Z",
+    "split_started_at": "2026-08-25T09:07:10Z",
+    "stopped_at": "2026-08-25T09:12:25Z",
+    "llm_calls": 39,
+    "llm_prompt_tokens": 620521,
+    "llm_completion_tokens": 7684,
+    "llm_total_tokens": 628205,
+    "estimated_cost_usd": 0.643573,
+    "cost_is_estimated": true,
+    "unrecorded_transient_500_retries": 4,
+    "registry_counts": {
+      "watch_dirs": 1,
+      "trajectories": 1,
+      "llm_usage": 39,
+      "atom_adoption": 0,
+      "canary_decision": 0
+    },
+    "trajectory": {
+      "status_at_shutdown": "splitting",
+      "tasks_extracted": 0,
+      "retry_count": 1,
+      "first_failure": "14 user intents and zero submit_atom calls"
+    },
+    "second_split_trace": {
+      "rounds_started": 29,
+      "look_tool_calls": 36,
+      "submit_atom_tool_calls": 0,
+      "sha256": "7eaf11e41d2e64cd6689a674a7d9f00b72351cefd00e241da08eb5585ac0272c"
+    },
+    "watcher_final": {
+      "polls": 64,
+      "new_trajectories": 1,
+      "errors": 1,
+      "retries": 1,
+      "atoms_extracted": 0,
+      "indexed": 0,
+      "atoms_clustered": 0,
+      "skills_edited": 0,
+      "scores": 0
+    },
+    "real_home_scope_probe": {
+      "started_at": "2026-08-25T09:02:54Z",
+      "stopped_at": "2026-08-25T09:04:42Z",
+      "codex_bridge_files": 624,
+      "codex_bridge_bytes": 137981171,
+      "unrelated_claude_bridge_files": 6,
+      "watch_dirs_registered": 2,
+      "watcher_polls_before_stop": 0,
+      "cleanup": "moved generated files to recoverable /tmp quarantine and removed the two empty watch-dir registrations"
+    },
+    "atom_to_skill_canary_verified": false,
+    "configured_llm_model": "MiniMax-M3",
+    "configured_embedding_model": "qwen3-vl-embedding",
+    "config_mode": "0600",
+    "isolated_config_removed_after_run": true,
+    "settle_seconds": 10,
+    "limitation": "bridge and discovery passed, but MiniMax TaskAgent never called submit_atom; automatic embedding, clustering, SkillEdit, reinjection, and canary were not reached"
+  }
+}
