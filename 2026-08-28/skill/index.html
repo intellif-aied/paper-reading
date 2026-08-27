@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-deck="xskill">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#172234">
+  <title>XSkill：把会话经验变成可试用、可回滚的 Skill</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    :root{--paper:#f5f5f5;--white:#fff;--ink:#2d3142;--muted:#59657a;--soft:#d8dde6;--navy:#172234;--navy2:#203e6d;--accent:#eb6c36;--accent-soft:#fff1e9;--cyan:#29c7c9;--blue:#2e5aa8;--green:#287a4b;--red:#b84436;--amber:#a57419;--sans:"Geist","Noto Sans SC","Microsoft YaHei",sans-serif;--serif:"Instrument Serif","Noto Serif SC",serif;--mono:"Geist Mono","SFMono-Regular",Consolas,monospace}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#1c2737;color:var(--ink);font-family:var(--sans)}body{overflow:auto}.deck{min-height:100vh}.slide{position:relative;display:grid;align-content:start;gap:1.5rem;min-height:100vh;padding:clamp(2rem,5vw,5rem);overflow:hidden;background:var(--paper)}.deck[data-ready="true"]{height:100dvh}.deck[data-ready="true"] .slide{position:fixed;left:50%;top:50%;display:none;width:min(100vw,177.7778vh);height:min(100vh,56.25vw);min-height:0;transform:translate(-50%,-50%)}.deck[data-ready="true"] .slide.active{display:grid}.slide.dark{color:#f8fbff;background:radial-gradient(circle at 88% 12%,#274a80 0,#172b4c 34%,#111b2a 76%)}.slide.light{background:var(--paper)}.slide.white{background:#fff}.slide.diagram-slide{display:block;padding:0}.deck[data-ready="true"] .slide.diagram-slide.active{display:block}.diagram{display:block;width:100%;height:100%;border:0;background:var(--paper)}
+    h1,h2,h3,p{margin:0}h1{max-width:17ch;font:400 clamp(3rem,6.5vw,7rem)/.98 var(--serif);letter-spacing:-.035em}h2{max-width:22ch;font:400 clamp(2.25rem,4.2vw,4.5rem)/1.02 var(--serif);letter-spacing:-.025em}h3{font-size:clamp(1rem,1.55vw,1.5rem);line-height:1.25}.kicker{font:600 clamp(.68rem,.9vw,.9rem)/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}.dark .kicker{color:#58dddd}.subtitle{max-width:34ch;font-size:clamp(1.2rem,2.2vw,2.2rem);line-height:1.35;color:#aebed5}.lead{max-width:50ch;font-size:clamp(1.1rem,1.8vw,1.8rem);line-height:1.5;color:var(--muted)}.dark .lead{color:#c3cee0}.mono{font-family:var(--mono)}.accent{color:var(--accent)}.cyan{color:var(--cyan)}.muted{color:var(--muted)}.strong{font-weight:700}.nowrap{white-space:nowrap}
+    .cover{align-content:center}.cover-meta{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}.pill{display:inline-flex;align-items:center;min-height:2.25rem;padding:.45rem .8rem;border:1px solid rgba(255,255,255,.2);border-radius:999px;color:#c6d3e7;font:500 .78rem var(--mono)}.cover-rule{width:5rem;height:.25rem;margin:1.1rem 0;background:linear-gradient(90deg,#2e82ff,var(--cyan));border-radius:999px}.cover-date{font:500 .9rem var(--mono);color:#8fa2bd}
+    .source{position:absolute;left:clamp(2rem,5vw,5rem);right:clamp(2rem,5vw,5rem);bottom:clamp(1rem,2vw,1.75rem);font:400 clamp(.56rem,.72vw,.72rem)/1.4 var(--mono);color:#758197}.dark .source{color:#8194af}.source a{color:inherit;text-underline-offset:.2em}.page-no{position:absolute;right:clamp(2rem,4vw,4rem);bottom:clamp(1rem,2vw,1.75rem);font:500 .7rem var(--mono);color:#7c899d}
+    .grid{display:grid;gap:1.25rem}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}.card{padding:clamp(1.1rem,2vw,2rem);border:1px solid var(--soft);border-radius:1rem;background:rgba(255,255,255,.78)}.card.dark-card{border-color:rgba(255,255,255,.13);background:rgba(8,18,32,.44);color:#fff}.card p{margin-top:.55rem;font-size:clamp(.85rem,1.18vw,1.15rem);line-height:1.5;color:var(--muted)}.dark-card p{color:#b7c5d9}.number{display:block;font:600 clamp(2.8rem,5vw,5.5rem)/.92 var(--mono);letter-spacing:-.06em}.number.small{font-size:clamp(2rem,3.3vw,3.5rem)}.stat-label{display:block;margin-top:.6rem;font-size:clamp(.8rem,1vw,1rem);line-height:1.4;color:var(--muted)}.dark .stat-label{color:#aebed5}.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}.stat{padding:1.4rem;border-top:3px solid var(--accent);background:rgba(255,255,255,.7)}
+    .problem-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center}.problem-copy{font-size:clamp(1.5rem,2.6vw,2.8rem);font-weight:650;line-height:1.28}.problem-copy span{color:var(--cyan)}.dark-stats{display:grid;gap:.75rem}.dark-stat{display:grid;grid-template-columns:8rem 1fr;gap:1.25rem;align-items:center;padding:1.1rem 1.25rem;border:1px solid rgba(255,255,255,.14);border-radius:.9rem;background:rgba(5,15,28,.38)}.dark-stat .number{color:#fff}.dark-stat p{font-size:1rem;line-height:1.45;color:#afbed3}
+    .questions{counter-reset:q}.question{position:relative;min-height:12rem;padding-top:4.25rem}.question::before{counter-increment:q;content:"0" counter(q);position:absolute;top:1.25rem;left:1.5rem;font:600 1rem var(--mono);color:var(--blue)}.question h3{font-size:clamp(1.2rem,1.8vw,1.8rem)}
+    .skill-layout{display:grid;grid-template-columns:.85fr 1.15fr;gap:3rem;align-items:center}.file-tree{padding:2rem;border-radius:1rem;background:#151f2e;color:#c9d7e8;font:500 clamp(.9rem,1.2vw,1.15rem)/1.9 var(--mono)}.file-tree .root{color:#58dddd}.file-tree .hot{color:#ff9a6c}.version-stack{display:grid;gap:.8rem}.version-row{display:grid;grid-template-columns:8rem 1fr auto;gap:1rem;align-items:center;padding:1rem 1.2rem;border:1px solid var(--soft);border-radius:.8rem;background:#fff}.version-row strong{font:600 1rem var(--mono)}.version-row code{color:var(--blue);font:500 .78rem var(--mono)}.version-row.current{border-left:5px solid var(--green)}.version-row.candidate{border-left:5px solid var(--accent)}.version-row.draft{border-left:5px solid #8793a6}
+    .object-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.8rem;align-items:stretch}.object{position:relative;padding:1.3rem 1rem;border:1px solid var(--soft);border-radius:.9rem;background:#fff}.object:not(:last-child)::after{content:"→";position:absolute;right:-1rem;top:50%;z-index:2;width:1.2rem;transform:translateY(-50%);color:var(--accent);font:600 1.25rem var(--mono);text-align:center}.object .tag{display:block;margin-bottom:.75rem;color:var(--blue);font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase}.object h3{font-size:1.05rem}.object p{margin-top:.5rem;font-size:.83rem;line-height:1.45;color:var(--muted)}
+    .mode{min-height:19rem}.mode .mode-title{display:flex;align-items:center;gap:.75rem}.mode .badge{display:inline-grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--navy);color:#fff;font:600 .78rem var(--mono)}.mode-flow{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:1.4rem}.mode-flow span{padding:.6rem .75rem;border-radius:.55rem;background:#edf1f6;font:500 .78rem var(--mono)}.mode-flow b{color:var(--accent)}
+    .versus{display:grid;grid-template-columns:1fr auto 1fr;gap:1.5rem;align-items:center}.version-card{padding:2rem;border:2px solid var(--soft);border-radius:1rem;background:#fff}.version-card h3{display:flex;justify-content:space-between;gap:1rem}.version-card .share{font:600 2.8rem var(--mono)}.version-card.main{border-color:#6c85ad}.version-card.staging{border-color:var(--accent);background:var(--accent-soft)}.vs{font:600 1rem var(--mono);color:var(--muted)}.sha{display:block;margin-top:1rem;font:500 .8rem var(--mono);color:var(--muted)}.definition{padding:1.15rem 1.35rem;border-left:5px solid var(--accent);background:#fff;font-size:clamp(1rem,1.4vw,1.35rem);line-height:1.5}
+    .compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}.compare-panel{padding:1.5rem;border:1px solid var(--soft);border-radius:1rem;background:#fff}.compare-panel .panel-tag{font:600 .75rem var(--mono);letter-spacing:.12em;color:var(--blue)}.compare-panel h3{margin:.65rem 0 1rem;font-size:1.45rem}.formula{padding:1.25rem;border-radius:.7rem;background:#151f2e;color:#eff5ff;font:500 clamp(.75rem,1.05vw,1rem)/1.75 var(--mono)}.code-line{display:flex;gap:.9rem;align-items:flex-start;margin:.7rem 0;font-size:clamp(.85rem,1.08vw,1.05rem);line-height:1.5}.code-line b{flex:0 0 auto;color:var(--accent);font-family:var(--mono)}.verdict{padding:1rem 1.2rem;border-radius:.75rem;background:#fff7e8;color:#604a18;font-size:clamp(.9rem,1.2vw,1.15rem);line-height:1.5}
+    .ledger{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}.ledger-card{min-height:17rem;padding:1.35rem;border-top:5px solid #8793a6;border-radius:.8rem;background:#fff}.ledger-card.real{border-color:var(--green)}.ledger-card.hypo{border-color:var(--accent)}.ledger-card.estimate{border-color:var(--amber)}.ledger-card.claim{border-color:var(--blue)}.ledger-card .kind{font:600 .72rem var(--mono);letter-spacing:.1em;color:var(--muted)}.ledger-card h3{margin:.8rem 0;font-size:1.15rem}.ledger-card p{font-size:.88rem;line-height:1.5;color:var(--muted)}.ledger-card .bigline{display:block;margin:.9rem 0;font:600 1.7rem var(--mono)}
+    .trace{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:1rem;border:1px solid #3b4a61;border-radius:1rem;overflow:hidden;background:#121c2a;color:#eef4ff}.trace-step{position:relative;min-height:13rem;padding:1.5rem;border-right:1px solid #3b4a61}.trace-step:last-child{border-right:0}.trace-step .step{font:600 .72rem var(--mono);letter-spacing:.1em;color:#7e91ad}.trace-step h3{margin:.75rem 0 1rem;font-size:1.15rem}.trace-step .metric{display:block;font:600 clamp(1.7rem,3vw,3.2rem)/1 var(--mono);color:#fff}.trace-step p{margin-top:.8rem;color:#9eafc5;font-size:.82rem;line-height:1.5}.trace-step.pass{box-shadow:inset 0 4px var(--green)}.trace-step.partial{box-shadow:inset 0 4px var(--accent)}.trace-step.stop{box-shadow:inset 0 4px #6c7584}.trace-step:not(:last-child)::after{content:"";position:absolute;right:-.5rem;top:50%;z-index:2;width:1rem;height:1rem;transform:translateY(-50%) rotate(45deg);border-top:1px solid #3b4a61;border-right:1px solid #3b4a61;background:#121c2a}.readout{display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;border-left:5px solid var(--cyan);background:#edf6f6;font-size:clamp(.9rem,1.15vw,1.1rem);line-height:1.45}.readout b{font:600 .75rem var(--mono);letter-spacing:.08em;color:#197174}
+    .probe{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}.probe-panel{padding:1.5rem;border:1px solid var(--soft);border-radius:1rem;background:#fff}.probe-panel h3{margin-bottom:.8rem}.probe-panel .arrow-result{display:grid;grid-template-columns:1fr auto 1fr;gap:.75rem;align-items:center;margin:1.25rem 0}.probe-panel .arrow-result div{padding:1rem;border-radius:.65rem;background:#eef1f5;text-align:center}.probe-panel .arrow-result b{font:600 1.55rem var(--mono)}.probe-panel .arrow-result span{font:600 1.2rem var(--mono);color:var(--accent)}.audit-list{display:grid;gap:.55rem}.audit-item{display:flex;justify-content:space-between;padding:.65rem .8rem;border-radius:.55rem;background:#f1f3f6;font-size:.88rem}.audit-item b{font-family:var(--mono)}
+    .judgment{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}.judgment .card{min-height:18rem}.judgment h3{font-size:1.35rem}.judgment ul{margin:1rem 0 0;padding-left:1.2rem}.judgment li{margin:.65rem 0;font-size:.9rem;line-height:1.45;color:var(--muted)}
+    .experiment{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}.experiment-card{padding:1.5rem;border:1px solid var(--soft);border-radius:1rem;background:#fff}.experiment-card .exp-no{font:600 .8rem var(--mono);color:var(--blue)}.experiment-card h3{margin:.65rem 0 1rem;font-size:1.3rem}.experiment-card ol{margin:0;padding-left:1.2rem}.experiment-card li{margin:.55rem 0;font-size:.9rem;line-height:1.45;color:var(--muted)}.metric-row{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem}.metric-chip{padding:.55rem .7rem;border-radius:999px;background:#eef1f5;font:500 .72rem var(--mono)}
+    .compact{gap:.8rem;padding-top:clamp(1.5rem,3vw,3rem);padding-bottom:clamp(1.5rem,3vw,3rem)}.compact .compare-panel,.compact .experiment-card{padding:1rem 1.2rem}.compact .formula{padding:.8rem 1rem;line-height:1.5}.compact .code-line{margin:.4rem 0}.compact .verdict,.compact .definition{padding:.75rem 1rem}
+    .takeaways{align-content:center}.takeaway-list{display:grid;gap:1rem;max-width:72rem}.takeaway{display:grid;grid-template-columns:3rem 1fr;gap:1rem;align-items:start}.takeaway b{display:grid;place-items:center;width:2.5rem;height:2.5rem;border:1px solid rgba(255,255,255,.18);border-radius:50%;color:var(--cyan);font:600 .8rem var(--mono)}.takeaway p{font-size:clamp(1.05rem,1.65vw,1.65rem);line-height:1.4;color:#dae4f2}.question-end{margin-top:1rem;color:#7ce2df;font:500 clamp(1rem,1.3vw,1.25rem) var(--mono)}
+    .matrix{width:100%;border-collapse:collapse;background:#fff;font-size:clamp(.66rem,.86vw,.88rem)}.matrix th,.matrix td{padding:.6rem .75rem;border-bottom:1px solid var(--soft);text-align:left;vertical-align:top;line-height:1.35}.matrix th{background:#e9edf3;font:600 .72rem var(--mono);color:#40506a}.matrix td:first-child{font-weight:600}.appendix-label{color:var(--accent);font:600 .75rem var(--mono);letter-spacing:.14em}.source-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.source-link{display:block;padding:1.2rem;border:1px solid var(--soft);border-radius:.8rem;background:#fff;color:var(--ink);text-decoration:none}.source-link strong{display:block}.source-link span{display:block;margin-top:.4rem;color:var(--muted);font:400 .75rem var(--mono)}
+    [data-fragment]{opacity:1;transform:none}.deck[data-ready="true"] [data-fragment]{opacity:.16;transform:translateY(.35rem);transition:opacity .22s ease,transform .22s ease}.deck[data-ready="true"] [data-fragment].visible{opacity:1;transform:none}
+    .controls{position:fixed;right:max(.8rem,env(safe-area-inset-right));bottom:max(.8rem,env(safe-area-inset-bottom));z-index:50;display:flex;align-items:center;gap:.35rem;padding:.35rem;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(12,21,33,.86);backdrop-filter:blur(12px)}.controls button{display:grid;place-items:center;min-width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:#eef5ff;font:600 .85rem var(--mono);cursor:pointer}.controls button:hover,.controls button:focus-visible{outline:none;background:rgba(255,255,255,.12)}.counter{min-width:4.5rem;text-align:center;color:#b9c7da;font:500 .7rem var(--mono)}.progress{position:fixed;left:0;bottom:0;z-index:49;width:100%;height:3px;background:rgba(255,255,255,.1)}.progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,#2e82ff,var(--cyan));transition:width .2s ease}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    dialog{width:min(54rem,90vw);max-height:80vh;padding:0;border:1px solid #3c4a60;border-radius:1rem;background:#172234;color:#eef5ff;box-shadow:0 2rem 6rem rgba(0,0,0,.45)}dialog::backdrop{background:rgba(7,12,20,.74);backdrop-filter:blur(5px)}.overview-head{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;background:#172234;border-bottom:1px solid #35445a}.overview-head h2{font:600 1rem var(--sans)}.overview-head button{min-width:44px;height:44px;border:1px solid #53647d;border-radius:50%;background:transparent;color:#fff;cursor:pointer}.overview-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;padding:1rem}.overview-list button{width:100%;padding:.85rem;border:1px solid #34445b;border-radius:.65rem;background:#111b2a;color:#dce6f4;text-align:left;cursor:pointer}.overview-list button:hover,.overview-list button:focus-visible{border-color:var(--cyan);outline:none}.overview-list small{display:block;margin-bottom:.35rem;color:#7f92ae;font-family:var(--mono)}
+    @media(max-width:820px){.slide{padding:1.35rem;padding-bottom:5rem;overflow:auto}.deck[data-ready="true"] .slide{width:100vw;height:100dvh}.diagram-slide{overflow:auto}.diagram{width:100%;min-width:900px}.grid.two,.grid.three,.grid.four,.problem-layout,.skill-layout,.compare,.ledger,.judgment,.experiment,.probe,.source-list{grid-template-columns:1fr}.stat-row{grid-template-columns:1fr 1fr}.object-flow{grid-template-columns:1fr}.object:not(:last-child)::after{content:"↓";right:50%;top:auto;bottom:-1.15rem;transform:translateX(50%)}.versus{grid-template-columns:1fr}.vs{text-align:center}.trace{grid-template-columns:1fr}.trace-step{min-height:auto;border-right:0;border-bottom:1px solid #3b4a61}.trace-step:last-child{border-bottom:0}.trace-step:not(:last-child)::after{display:none}.overview-list{grid-template-columns:1fr}.source{position:static;margin-top:1rem}.page-no{display:none}h1{font-size:3rem}h2{font-size:2.35rem}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+    @media print{@page{size:13.333in 7.5in;margin:0}html,body{background:#fff}.deck[data-ready="true"]{height:auto}.deck[data-ready="true"] .slide,.slide{position:relative!important;left:auto!important;top:auto!important;display:grid!important;width:13.333in!important;height:7.5in!important;min-height:0!important;transform:none!important;break-after:page;page-break-after:always}.slide.diagram-slide{display:block!important}.controls,.progress,dialog{display:none!important}[data-fragment]{opacity:1!important;transform:none!important}.source{bottom:.16in}.diagram{height:100%}}
+  </style>
+</head>
+<body>
+<main class="deck" id="deck">
+  <section class="slide dark cover" id="cover" data-title="封面" aria-labelledby="cover-title">
+    <p class="kicker">Repo Reading · XSkill</p>
+    <h1 id="cover-title" tabindex="-1">把会话经验变成<br><span class="cyan">可试用、可回滚</span>的 Skill</h1>
+    <div class="cover-rule"></div>
+    <p class="subtitle">从轨迹提炼，到 Git 版本，再到真实流量 Canary</p>
+    <div class="cover-meta"><span class="pill">paper v4 · WIP</span><span class="pill">source · bc9bf94</span><span class="pill">wiki · bc7ac83</span></div>
+    <p class="cover-date">2026-08-28 · paper reading</p>
+    <aside class="speaker-notes" hidden>开场只给系统主张：XSkill 把 Skill 当成持续演化的团队资产。后续先定义版本，再解释 Canary。</aside>
+  </section>
+
+  <section class="slide dark" id="problem" data-title="Skill 写出来以后" aria-labelledby="problem-title">
+    <p class="kicker">Why lifecycle management</p>
+    <h2 id="problem-title" tabindex="-1">Skill 写出来以后，问题才开始</h2>
+    <div class="problem-layout">
+      <p class="problem-copy">哪个经验值得写？<br>更新后能否<span>安全上线</span>？<br>退化时怎样<span>回滚</span>？</p>
+      <div class="dark-stats">
+        <div class="dark-stat"><span class="number small">139</span><p>作者报告的一台重度用户机器上的 Skill 文件数</p></div>
+        <div class="dark-stat"><span class="number small">26,448</span><p>仅 description listing 的字符数</p></div>
+        <div class="dark-stat"><span class="number small">3.3×</span><p>相对 8,000 字符 listing budget 的溢出</p></div>
+      </div>
+    </div>
+    <p class="source">作者单用户 inventory：paper Table 5 / §5.1。论文结论中的 13× 与 26,448÷8,000 不一致，本页使用 3.3×。</p>
+    <span class="page-no">02</span>
+  </section>
+
+  <section class="slide light" id="questions" data-title="三个问题" aria-labelledby="questions-title">
+    <p class="kicker">Talk map</p>
+    <h2 id="questions-title" tabindex="-1">这次只回答三个问题</h2>
+    <div class="grid three questions">
+      <article class="card question" data-fragment><h3>一段工作会话怎样变成可复用的 Skill？</h3><p>先统一日志格式，再切成单一任务，最后积累到一次版本改动。</p></article>
+      <article class="card question" data-fragment><h3>一个 Skill 的“版本”是什么？</h3><p>完整目录的 Git commit；Main 是当前版本，Staging 是待检验版本。</p></article>
+      <article class="card question" data-fragment><h3>真实使用怎样决定下一版？</h3><p>Canary 把小部分流量给候选版，收集 UX 证据后选择胜者。</p></article>
+    </div>
+    <p class="source">叙事顺序：对象定义 → 数据流 → 版本 → Canary → 证据。</p><span class="page-no">03</span>
+  </section>
+
+  <section class="slide white" id="skill-version" data-title="Skill 与版本" aria-labelledby="skill-version-title">
+    <p class="kicker">Definition first</p>
+    <h2 id="skill-version-title" tabindex="-1">一个 Skill 是目录；一个版本是这个目录的 Git commit</h2>
+    <div class="skill-layout">
+      <pre class="file-tree"><span class="root">deploy-python/</span>
+├── <span class="hot">SKILL.md</span>
+├── scripts/
+├── references/
+└── assets/</pre>
+      <div class="version-stack">
+        <div class="version-row draft"><strong>Baby</strong><span>第一版草稿，尚未分发</span><code>draft</code></div>
+        <div class="version-row current"><strong>Main</strong><span>当前给用户使用的完整目录</span><code>6aa1e9…</code></div>
+        <div class="version-row candidate"><strong>Staging</strong><span>新改动的候选目录，小流量试用</span><code>b71c42…</code></div>
+      </div>
+    </div>
+    <p class="definition">Git 带来三件现成能力：看 diff、锁定精确 SHA、把失败候选留档。</p>
+    <p class="source">source · src/xskill/skill/git.py · paper §3.2.3 / §3.3</p><span class="page-no">04</span>
+  </section>
+
+  <section class="slide light" id="objects" data-title="五个数据对象" aria-labelledby="objects-title">
+    <p class="kicker">Vocabulary</p>
+    <h2 id="objects-title" tabindex="-1">五个对象，按产生顺序读</h2>
+    <div class="object-flow">
+      <article class="object"><span class="tag">Native log</span><h3>原生会话日志</h3><p>Claude、Codex 等运行时自己写出的 JSONL 或数据库记录。</p></article>
+      <article class="object"><span class="tag">Bridge file</span><h3>统一会话副本</h3><p>XSkill 把不同日志转换成 Markdown 与元数据，供后续统一处理。</p></article>
+      <article class="object"><span class="tag">Atom</span><h3>单一用户任务</h3><p>从长会话中切出的一段连续意图，保留原始行号范围。</p></article>
+      <article class="object"><span class="tag">Candidate</span><h3>版本改动证据</h3><p>某个 Atom 对某个 Skill 有复用价值，先进入候选账本。</p></article>
+      <article class="object"><span class="tag">Version</span><h3>完整 Skill 版本</h3><p>候选累计后改写整个目录，并提交到 Baby、Main 或 Staging。</p></article>
+    </div>
+    <p class="source">“Bridge”在本报告中专指统一后的 Markdown 会话副本；它不承担模型代理或网络转发。</p><span class="page-no">05</span>
+  </section>
+
+  <section class="slide diagram-slide" id="architecture" data-title="系统边界" aria-label="XSkill 系统边界架构图">
+    <iframe class="diagram" src="diagrams/xskill-system-map.html" title="XSkill 接在 coding agent 文件两端的架构图"></iframe>
+  </section>
+
+  <section class="slide diagram-slide" id="capture" data-title="统一会话副本" aria-label="不同 agent 会话转换成统一文本的数据流图">
+    <iframe class="diagram" src="diagrams/trajectory-normalization.html" title="不同格式会话转换成统一文本的数据流图"></iframe>
+  </section>
+
+  <section class="slide diagram-slide" id="distill" data-title="三步提炼" aria-label="三 Agent 提炼流程图">
+    <iframe class="diagram" src="diagrams/distillation-pipeline.html" title="XSkill 三 Agent 提炼流程图"></iframe>
+  </section>
+
+  <section class="slide diagram-slide" id="two-scores" data-title="两个分数" aria-label="Weightscore 和 UX score 控制点图">
+    <iframe class="diagram" src="diagrams/evidence-control-points.html" title="Weightscore 与 UX score 控制不同决策"></iframe>
+  </section>
+
+  <section class="slide diagram-slide" id="version-state" data-title="版本状态" aria-label="Skill 版本状态机">
+    <iframe class="diagram" src="diagrams/skill-version-state.html" title="Baby Main Staging 与 Frozen 的状态机"></iframe>
+  </section>
+
+  <section class="slide light" id="modes" data-title="Standalone 与 Team" aria-labelledby="modes-title">
+    <p class="kicker">Deployment modes</p>
+    <h2 id="modes-title" tabindex="-1">Standalone 与 Team，只是部署边界不同</h2>
+    <div class="grid two">
+      <article class="card mode">
+        <div class="mode-title"><span class="badge">1</span><h3>Standalone · 单机模式</h3></div>
+        <p>采集、提炼、Git 仓库与安装都在同一台开发机。版本只影响这台机器的 agent。</p>
+        <div class="mode-flow"><span>本机会话</span><b>→</b><span>本地 XSkill</span><b>→</b><span>本地 Skill 目录</span></div>
+      </article>
+      <article class="card mode">
+        <div class="mode-title"><span class="badge">N</span><h3>Team · 团队模式</h3></div>
+        <p>每台机器运行 client；中央 server 汇总会话、维护版本并给每个 client 下发精确 side 与 SHA。</p>
+        <div class="mode-flow"><span>多台 client</span><b>→</b><span>中央 server</span><b>→</b><span>指定版本同步回 client</span></div>
+      </article>
+    </div>
+    <p class="definition">“同步版本”指把某个 Skill 目录对齐到指定 Git commit，再放进 agent 的原生 discovery 目录。</p>
+    <p class="source">source · team/client/daemon.py · team/shared/reconcile.py · ecosystem installers</p><span class="page-no">11</span>
+  </section>
+
+  <section class="slide white" id="canary-definition" data-title="Canary 定义" aria-labelledby="canary-definition-title">
+    <p class="kicker">The central idea</p>
+    <h2 id="canary-definition-title" tabindex="-1">已有 Skill 的自动更新，默认先进入 Staging</h2>
+    <p class="lead">新 Skill 没有旧版本可比较：它在 Baby 完成第一版后发布为 Main。Canary 从已有 Main 的下一次更新开始。</p>
+    <div class="versus">
+      <article class="version-card main"><h3><span>Main · 当前版</span><span class="share">≈80%</span></h3><p class="lead">已有稳定内容，继续给大部分合适流量使用。</p><span class="sha">skill=deploy · sha=6aa1e9…</span></article>
+      <span class="vs">VS</span>
+      <article class="version-card staging"><h3><span>Staging · 候选版</span><span class="share">≈20%</span></h3><p class="lead">包含新经验，只在小流量上试用，尚未覆盖 Main。</p><span class="sha">skill=deploy · sha=b71c42…</span></article>
+    </div>
+    <p class="definition"><strong>Canary：</strong>两个不可变版本同时存在；真实任务产生的体验证据决定下一轮 Main。</p>
+    <p class="source">当前默认 staging probability = 0.2。`xskill generate` 与 jam breaker 是两条显式旁路。来源：config.py / canary.py / generate_agent.py。</p><span class="page-no">12</span>
+  </section>
+
+  <section class="slide diagram-slide" id="canary-loop" data-title="Canary 反馈回路" aria-label="Canary 反馈循环图">
+    <iframe class="diagram" src="diagrams/canary-feedback-loop.html" title="新版本先接受小流量检验的 Canary 反馈循环"></iframe>
+  </section>
+
+  <section class="slide light compact" id="ux-score" data-title="UX 分数来源" aria-labelledby="ux-score-title">
+    <p class="kicker">Who scores</p>
+    <h2 id="ux-score-title" tabindex="-1">用户提供真实任务结果；分数由系统生成</h2>
+    <p class="lead">当前实现没有星级弹窗。用户照常使用 agent，评分器读取后续交互。</p>
+    <div class="compare">
+      <article class="compare-panel">
+        <span class="panel-tag">PAPER PROTOCOL</span><h3>行为信号公式</h3>
+        <div class="formula">5 × completion<br>+ 3 × (1 − min(corrections / 3, 1))<br>+ 2 × skill attribution</div>
+        <div class="code-line"><b>来源</b><span>任务完成、用户修正次数、是否实际使用该 Skill。</span></div>
+        <div class="code-line"><b>状态</b><span>论文设计；当前源码没有计算这条公式。</span></div>
+      </article>
+      <article class="compare-panel">
+        <span class="panel-tag">CURRENT SOURCE</span><h3>LLM 直接给 1–10</h3>
+        <div class="formula">trajectory text<br>→ TaskAgent rubric<br>→ integer ux_score ∈ [1,10]</div>
+        <div class="code-line"><b>来源</b><span>LLM 阅读轨迹，综合完成、修正和结果后选择分档。</span></div>
+        <div class="code-line"><b>风险</b><span>未做人工满意度标定；排序偏差会直接改变 Canary 结果。</span></div>
+      </article>
+    </div>
+    <p class="verdict">Canary 的反馈回路已经存在；UX 指标还不能称为经过验证的用户价值度量。</p>
+    <p class="source">paper Eq. 1 / §3.3 · source agents/task_agent.py · pipeline/runner.py</p><span class="page-no">14</span>
+  </section>
+
+  <section class="slide diagram-slide" id="canary-drift" data-title="论文与源码的 Canary" aria-label="论文与源码 Canary 规则对照图">
+    <iframe class="diagram" src="diagrams/canary-paper-vs-code.html" title="论文 Canary 与当前实现的规则对照"></iframe>
+  </section>
+
+  <section class="slide diagram-slide" id="attribution" data-title="版本归因缺口" aria-label="Canary 版本归因缺口流程图">
+    <iframe class="diagram" src="diagrams/canary-attribution-gap.html" title="评分版本与实际下发版本可能不一致"></iframe>
+  </section>
+
+  <section class="slide light" id="paper-evidence" data-title="论文的证据账本" aria-labelledby="paper-evidence-title">
+    <p class="kicker">Evidence ledger</p>
+    <h2 id="paper-evidence-title" tabindex="-1">论文是 WIP 系统设计；四类数字要分开读</h2>
+    <div class="ledger">
+      <article class="ledger-card real"><span class="kind">OBSERVED</span><h3>作者机器库存</h3><span class="bigline">139 skills</span><p>单个重度用户的真实快照。说明 catalog 压力存在，不代表总体分布。</p></article>
+      <article class="ledger-card hypo"><span class="kind">HYPOTHETICAL</span><h3>FastAPI 生命周期</h3><span class="bigline">p = .038</span><p>论文明确写为说明机制的构造示例，不能当作上线结果。</p></article>
+      <article class="ledger-card estimate"><span class="kind">ESTIMATED</span><h3>吞吐与收敛</h3><span class="bigline">1–2 weeks</span><p>基于假设流量和推理速度的容量推演，没有实测 wall clock。</p></article>
+      <article class="ledger-card claim"><span class="kind">LATER CLAIM</span><h3>README benchmark</h3><span class="bigline">+5.58 pp</span><p>当前 README 的三项均值；仓库快照没有逐题结果和对应运行产物。</p></article>
+    </div>
+    <p class="source">paper review flag / §5 · current xskill README benchmark table · reanalysis-research.md</p><span class="page-no">17</span>
+  </section>
+
+  <section class="slide white" id="experiment-trace" data-title="旧实验的 trace" aria-labelledby="experiment-trace-title">
+    <p class="kicker">Observed trace</p>
+    <h2 id="experiment-trace-title" tabindex="-1">旧实验沿一条 trace 检查四阶段</h2>
+    <div class="trace" role="img" aria-label="Coding task、采集、学习、下游四阶段的实验结果">
+      <article class="trace-step pass"><span class="step">01 · CODING</span><h3>真实任务交付</h3><span class="metric">71 passed</span><p>17 行实现、102 行测试；本次重新复跑仍为 71 passed。</p></article>
+      <article class="trace-step pass"><span class="step">02 · CAPTURE</span><h3>统一会话副本</h3><span class="metric">44 / 44</span><p>Native 与 sidecar 的工具名称序列逐项相同；146 turns。</p></article>
+      <article class="trace-step partial"><span class="step">03 · LEARN</span><h3>自动切分</h3><span class="metric">0 Atom</span><p>39 次成功 LLM 调用，628,205 tokens；完整会话没有提交 Atom。</p></article>
+      <article class="trace-step stop"><span class="step">04 · DOWNSTREAM</span><h3>未到达</h3><span class="metric">—</span><p>Candidate、SkillEdit、重新安装与 Canary 都没有自动执行。</p></article>
+    </div>
+    <div class="readout"><b>READOUT</b><span>采集链保留了工具序列；学习结果未达到可用条件；这条 trace 没有检验版本演化和 Canary。</span></div>
+    <p class="source">真实证据：references/claude-minimax-trial-evidence.json；复核：experiment audit。628,205 是 split pipeline token，不是 native session token。</p><span class="page-no">18</span>
+  </section>
+
+  <section class="slide white" id="judgment" data-title="对 XSkill 的判断" aria-labelledby="judgment-title">
+    <p class="kicker">Assessment</p>
+    <h2 id="judgment-title" tabindex="-1">对 XSkill 的判断</h2>
+    <div class="judgment">
+      <article class="card"><h3>工程骨架已存在</h3><ul><li>沿用 agent 原生 Skill loader</li><li>每个 Skill 独立 Git 仓库</li><li>Main / Staging 精确到 commit SHA</li><li>拒绝版本仍可审计和回滚</li></ul></article>
+      <article class="card"><h3>Canary 是核心贡献</h3><ul><li>候选版只接小流量</li><li>真实工作继续产生反馈</li><li>旧版本始终可用</li><li>下一轮继承胜出版本</li></ul></article>
+      <article class="card"><h3>当前证据仍缺四项</h3><ul><li>UX score 与用户价值的标定</li><li>实际下发 side / SHA 的可靠归因</li><li>可控误晋升率的决策规则</li><li>受控端到端效果实验</li></ul></article>
+    </div>
+    <p class="source">判断基于 paper v4、source bc9bf94、wiki bc7ac83 与旧实验复核；三者的时间点和口径分开记录。</p><span class="page-no">19</span>
+  </section>
+
+  <section class="slide light compact" id="next-experiment" data-title="下一轮实验" aria-labelledby="next-experiment-title">
+    <p class="kicker">Minimum meaningful eval</p>
+    <h2 id="next-experiment-title" tabindex="-1">下一轮先测 Canary 数据是否可信</h2>
+    <div class="experiment">
+      <article class="experiment-card"><span class="exp-no">EXPERIMENT A</span><h3>版本归因一致性</h3><ol><li>固定一个 Main 与一个 Staging SHA。</li><li>覆盖普通分流、管理员 override、配额修正、server restart。</li><li>记录 manifest 实际下发的 (user, skill, side, SHA)。</li><li>逐行比较 UX ledger，目标一致率 100%。</li></ol><div class="metric-row"><span class="metric-chip">primary · attribution accuracy</span><span class="metric-chip">no LLM required</span></div></article>
+      <article class="experiment-card"><span class="exp-no">EXPERIMENT B</span><h3>误晋升仿真</h3><ol><li>构造同分布、Staging 略差、Staging 略优三种场景。</li><li>分数按 user / session 聚类，保留 1–10 有界分布。</li><li>比较当前均值规则、论文 Welch、用户级 permutation / sequential test。</li><li>报告误晋升率、正确晋升率与等待时长。</li></ol><div class="metric-row"><span class="metric-chip">primary · false promotion</span><span class="metric-chip">10k simulations</span></div></article>
+    </div>
+    <p class="definition">先确认 exposure 与评分版本一致，再讨论哪种统计检验更好。继续补跑生成模型无法回答这个前置问题。</p>
+    <p class="source">实验设计来自源码归因链审计与论文 §3.3 的统计有效性限制。</p><span class="page-no">20</span>
+  </section>
+
+  <section class="slide dark takeaways" id="takeaways" data-title="结论" aria-labelledby="takeaways-title">
+    <p class="kicker">Takeaways</p>
+    <h2 id="takeaways-title" tabindex="-1">四个结论</h2>
+    <div class="takeaway-list">
+      <div class="takeaway"><b>01</b><p>XSkill 给 Skill 目录增加了证据账本、Git 版本、分发与回滚。</p></div>
+      <div class="takeaway"><b>02</b><p>Canary 是最值得保留的设计：候选版本先接小流量，真实使用决定下一轮。</p></div>
+      <div class="takeaway"><b>03</b><p>当前产品使用 LLM UX 分与均值门槛；论文的行为公式和 Welch 检验没有落地。</p></div>
+      <div class="takeaway"><b>04</b><p>版本归因必须先准确，后续统计才有意义。当前 team 上传协议在这里留有缺口。</p></div>
+    </div>
+    <p class="question-end">讨论：XSkill 现在能否证明“这条 UX 分来自用户实际拿到的那个 commit”？</p>
+    <p class="source"><a href="narratives.html">三种叙事方案</a> · <a href="reanalysis.html">重新分析笔记</a> · ↓ 附录继续</p><span class="page-no">21</span>
+  </section>
+
+  <section class="slide light" id="appendix-drift" data-title="附录：三方差异" aria-labelledby="appendix-drift-title">
+    <p class="appendix-label">APPENDIX A</p><h2 id="appendix-drift-title" tabindex="-1">论文、Wiki、当前源码的关键差异</h2>
+    <table class="matrix"><thead><tr><th>议题</th><th>论文 v4</th><th>Wiki</th><th>当前源码 bc9bf94</th></tr></thead><tbody>
+      <tr><td>UX score</td><td>5/3/2 行为公式</td><td>交互产生 1–10</td><td>TaskAgent LLM 直接给 1–10</td></tr>
+      <tr><td>候选路由</td><td>embedding top-k</td><td>与已有 Skills 比较</td><td>扫描全 catalog；弱 Atom 仍须归类</td></tr>
+      <tr><td>weight ≥ 10</td><td>声称约 2–3 条轨迹</td><td>有用材料累计</td><td>单个 10 或十个 1 都能触发</td></tr>
+      <tr><td>Canary 样本</td><td>每侧 20</td><td>未分桶每侧 5</td><td>未分桶 5；分桶每侧总计 20</td></tr>
+      <tr><td>决策</td><td>单侧 Welch，p&lt;.05</td><td>Staging 均值不低于 Main</td><td>简单/加权均值；平局晋升</td></tr>
+      <tr><td>超时</td><td>30 天；正文口径不一</td><td>14 天丢弃</td><td>14 天丢弃；rejected ref 留档</td></tr>
+      <tr><td>生态</td><td>5 个，含 Hermes</td><td>6 个，不含 Hermes</td><td>9 个可探测；team collector 覆盖更少</td></tr>
+    </tbody></table>
+    <p class="source">完整表与精确行号见 reanalysis-research.md §6。</p>
+  </section>
+
+  <section class="slide diagram-slide" id="appendix-experiment" data-title="附录：实验双轨" aria-label="完整会话与 Case2-only 实验对照">
+    <iframe class="diagram" src="diagrams/experiment-cohort-trace.html" title="完整会话与 Case2-only 的实验双轨数据"></iframe>
+  </section>
+
+  <section class="slide light" id="appendix-probe" data-title="附录：缩小输入的探针" aria-labelledby="appendix-probe-title">
+    <p class="appendix-label">APPENDIX C</p>
+    <h2 id="appendix-probe-title" tabindex="-1">缩小输入后出现提交动作，边界质量仍不合格</h2>
+    <div class="probe">
+      <article class="probe-panel"><h3>完整会话</h3><div class="arrow-result"><div><b>2,220</b><br><span class="muted">行 · 14 个意图</span></div><span>→</span><div><b>0</b><br><span class="muted">Atom</span></div></div><p class="lead">长会话混合 pilot、TDD、权限中断与退出指令。</p></article>
+      <article class="probe-panel"><h3>机械截取 Case 2</h3><div class="arrow-result"><div><b>1,040</b><br><span class="muted">行 · 7 个 user header</span></div><span>→</span><div><b>3</b><br><span class="muted">submitted Atom</span></div></div><div class="audit-list"><div class="audit-item"><span>任务级预期</span><b>1</b></div><div class="audit-item"><span>语义过切</span><b>1</b></div><div class="audit-item"><span>/exit 噪声</span><b>1</b></div></div></article>
+    </div>
+    <p class="definition">固定模型与工具，只收窄输入范围，提交从 0 变成 3。工具能够被调用；任务边界仍未切准。</p>
+    <p class="source">这项诊断只解释 0 Atom 的边界条件，不承担 XSkill 主结论。Case 2 输出只保留汇总，无法再次独立审计。</p>
+  </section>
+
+  <section class="slide white" id="appendix-audit" data-title="附录：数据复核" aria-labelledby="appendix-audit-title">
+    <p class="appendix-label">APPENDIX D</p><h2 id="appendix-audit-title" tabindex="-1">两处复核改变了数字口径</h2>
+    <div class="grid two">
+      <article class="card"><span class="number small">91 → 47</span><h3>event rows 与响应数口径不同</h3><p>44 个响应分别以 text 与 tool_use 两行保存，usage 完全重复。按 message.id 去重后，native input / output 为 3,719,340 / 11,441；旧值分别虚高 94.22% / 93.49%。</p></article>
+      <article class="card"><span class="number small">1 → 315</span><h3>默认 discovery 远超目标 cohort</h3><p>目标只有 1 条 session；首次启动在 108 秒内带入 315 条无关历史 session、630 个文件、131.60 MiB。部署前要限定数据范围和预算。</p></article>
+    </div>
+    <p class="definition">Trace 可用于评估的前提：先定义 event、response、session、trajectory 的计数单位。</p>
+    <p class="source">复算自保留的 native JSONL、Bridge sidecar 与隔离目录；详见 experiment audit。</p>
+  </section>
+
+  <section class="slide light" id="sources" data-title="附录：来源" aria-labelledby="sources-title">
+    <p class="appendix-label">APPENDIX E</p><h2 id="sources-title" tabindex="-1">材料与设计源</h2>
+    <div class="source-list">
+      <a class="source-link" href="reanalysis.html"><strong>重新分析笔记</strong><span>paper / source / wiki 三方核对与精确行号</span></a>
+      <a class="source-link" href="narratives.html"><strong>三种叙事方案</strong><span>生命周期、证据审计、Canary 在线评估</span></a>
+      <a class="source-link" href="references/claude-minimax-trial-evidence.json"><strong>脱敏实验摘要</strong><span>保留配置口径、阶段状态与聚合指标</span></a>
+      <a class="source-link" href="https://github.com/SkillNerds/xskill/tree/bc9bf941662467ac711523e450968f2677cd230e"><strong>XSkill 源码快照</strong><span>bc9bf941662467ac711523e450968f2677cd230e</span></a>
+      <a class="source-link" href="https://xskill.wiki/wiki.html"><strong>官方 Wiki</strong><span>本地镜像 commit bc7ac834…</span></a>
+      <a class="source-link" href="diagrams/canary-feedback-loop.html"><strong>图表 HTML 源</strong><span>Deck 使用 9 张自包含、可单独打开的 1280×720 图</span></a>
+    </div>
+    <p class="source">页面不包含模型端点、API key 或原始私有轨迹。</p>
+  </section>
+</main>
+
+<nav class="controls" aria-label="幻灯片导航">
+  <button id="prev" type="button" aria-label="上一页">←</button>
+  <button id="overviewButton" type="button" aria-label="打开总览">O</button>
+  <span class="counter" id="counter">1 / 26</span>
+  <button id="next" type="button" aria-label="下一页">→</button>
+</nav>
+<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+<p class="sr-only" id="live" aria-live="polite"></p>
+<dialog id="overview" aria-labelledby="overview-title">
+  <div class="overview-head"><h2 id="overview-title">Slide overview</h2><button type="button" id="closeOverview" aria-label="关闭总览">×</button></div>
+  <div class="overview-list" id="overviewList"></div>
+</dialog>
+
+<script>
+(() => {
+  const deck = document.querySelector('#deck');
+  const slides = [...document.querySelectorAll('.slide')];
+  const counter = document.querySelector('#counter');
+  const progress = document.querySelector('#progressBar');
+  const live = document.querySelector('#live');
+  const dialog = document.querySelector('#overview');
+  const list = document.querySelector('#overviewList');
+  let index = Math.max(0, slides.findIndex(s => s.id === decodeURIComponent(location.hash.slice(1))));
+
+  slides.forEach((slide, i) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.innerHTML = `<small>${String(i + 1).padStart(2, '0')}</small>${slide.dataset.title || slide.id}`;
+    button.addEventListener('click', () => { dialog.close(); show(i, true, true); });
+    list.append(button);
+  });
+
+  function fragments() { return [...slides[index].querySelectorAll('[data-fragment]')]; }
+  function show(nextIndex, push = false, focus = false) {
+    index = Math.max(0, Math.min(slides.length - 1, nextIndex));
+    slides.forEach((slide, i) => {
+      const active = i === index;
+      slide.classList.toggle('active', active);
+      slide.toggleAttribute('inert', !active);
+      slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+      if (!active) slide.querySelectorAll('[data-fragment]').forEach(el => el.classList.remove('visible'));
+    });
+    const url = `#${slides[index].id}`;
+    if (location.hash !== url) history[push ? 'pushState' : 'replaceState'](null, '', url);
+    counter.textContent = `${index + 1} / ${slides.length}`;
+    progress.style.width = `${((index + 1) / slides.length) * 100}%`;
+    live.textContent = `第 ${index + 1} 页：${slides[index].dataset.title || slides[index].id}`;
+    if (focus) slides[index].querySelector('h1,h2,[tabindex="-1"]')?.focus({preventScroll:true});
+  }
+  function forward() {
+    const hidden = fragments().find(el => !el.classList.contains('visible'));
+    if (hidden) hidden.classList.add('visible'); else show(index + 1, true, true);
+  }
+  function back() {
+    const visible = fragments().filter(el => el.classList.contains('visible'));
+    if (visible.length) visible.at(-1).classList.remove('visible'); else show(index - 1, true, true);
+  }
+  function overview() { if (!dialog.open) dialog.showModal(); }
+  document.querySelector('#next').addEventListener('click', forward);
+  document.querySelector('#prev').addEventListener('click', back);
+  document.querySelector('#overviewButton').addEventListener('click', overview);
+  document.querySelector('#closeOverview').addEventListener('click', () => dialog.close());
+  addEventListener('popstate', () => show(slides.findIndex(s => `#${s.id}` === location.hash), false, false));
+  addEventListener('keydown', event => {
+    if (/^(INPUT|TEXTAREA|SELECT|BUTTON|A)$/.test(event.target.tagName)) return;
+    if (['ArrowRight','ArrowDown','PageDown',' '].includes(event.key)) { event.preventDefault(); forward(); }
+    if (['ArrowLeft','ArrowUp','PageUp'].includes(event.key)) { event.preventDefault(); back(); }
+    if (event.key === 'Home') { event.preventDefault(); show(0, true, true); }
+    if (event.key === 'End') { event.preventDefault(); show(slides.length - 1, true, true); }
+    if (event.key.toLowerCase() === 'o') { event.preventDefault(); overview(); }
+    if (event.key === 'Escape' && !dialog.open) overview();
+    if (event.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+  });
+  deck.dataset.ready = 'true';
+  show(index, false, false);
+})();
+</script>
+</body>
+</html>

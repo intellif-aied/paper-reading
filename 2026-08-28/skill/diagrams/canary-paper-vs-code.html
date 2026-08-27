@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>论文 Canary 与当前实现从样本门槛开始分叉</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.lane-title{font:600 12px "Geist Mono",monospace;letter-spacing:1px;fill:#4f5d75}.label{font-size:16px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.tiny{font-size:12px;fill:#4f5d75}.lane{fill:#fff;stroke:#c8cdd7;stroke-width:2}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#canary-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#canary-arrow-accent)}.flow-link{fill:none;stroke:#2e5aa8;stroke-width:2;marker-end:url(#canary-arrow-link)}.diverge{fill:#eb6c36}.diverge-text{font:600 12px "Geist Mono",monospace;fill:#a33f1b}.status-good{fill:#e9f5ed;stroke:#2e7d4f;stroke-width:2}.status-warn{fill:#fff8e8;stroke:#d6a63c;stroke-width:2}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="canary-title canary-desc">
+  <title id="canary-title">论文 Canary 与当前实现从样本门槛开始分叉</title>
+  <desc id="canary-desc">两条轨迹都从真实用户按 side 和 commit SHA 归因开始。论文要求每侧二十样本、单侧 Welch 检验与三十天回退；当前代码默认未分桶每侧五样本、均值比较且平局晋升、十四天超时丢弃。</desc>
+  <defs>
+    <marker id="canary-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="canary-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="canary-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">PAIRED POLICY TRACE · PAPER VS CODE</text>
+  <text class="title" x="48" y="88">论文 Canary 与当前实现从样本门槛开始分叉</text>
+
+  <rect class="lane" x="48" y="248" width="1184" height="124" rx="16"/>
+  <rect class="lane" x="48" y="396" width="1184" height="124" rx="16"/>
+  <rect class="node" x="420" y="116" width="440" height="92" rx="16"/>
+  <text class="label" x="640" y="148" text-anchor="middle">真实使用 → side + commit SHA 归因</text>
+  <text class="sub" x="640" y="172" text-anchor="middle">同一用户粘在同一侧；默认 staging route probability = 0.2</text>
+  <text class="sub" x="640" y="192" text-anchor="middle">没有这两个字段，UX 样本不进入决策</text>
+
+  <!-- connectors first -->
+  <path class="flow" d="M640 208 V236 H220 V272"/>
+  <path class="flow-accent" d="M640 208 V236 H700 V272"/>
+  <path class="flow" d="M380 328 H428"/>
+  <path class="flow" d="M380 476 H428"/>
+  <path class="flow" d="M632 328 H680"/>
+  <path class="flow-accent" d="M632 476 H680"/>
+  <path class="flow" d="M884 328 H932"/>
+  <path class="flow-accent" d="M884 476 H932"/>
+
+  <text class="lane-title" x="68" y="276">PAPER ALGORITHM 2</text>
+  <text class="lane-title" x="68" y="424">CURRENT CODE + LOCAL WIKI</text>
+
+  <rect class="node" x="172" y="284" width="208" height="76" rx="12"/>
+  <text class="label mono" x="276" y="316" text-anchor="middle">≥ 20 / side</text><text class="sub" x="276" y="340" text-anchor="middle">固定样本门槛</text>
+  <rect class="node" x="440" y="284" width="192" height="76" rx="12"/>
+  <text class="label" x="536" y="316" text-anchor="middle">Welch t-test</text><text class="sub mono" x="536" y="340" text-anchor="middle">one-sided · α=.05</text>
+  <rect class="node" x="692" y="284" width="192" height="76" rx="12"/>
+  <text class="label" x="788" y="316" text-anchor="middle">严格晋升</text><text class="sub" x="788" y="340" text-anchor="middle">p&lt;.05 且均值更高</text>
+  <rect class="status-warn" x="944" y="284" width="240" height="76" rx="12"/>
+  <text class="label mono" x="1064" y="316" text-anchor="middle">30 d timeout</text><text class="sub" x="1064" y="340" text-anchor="middle">正文 Δ≥.5；算法 freeze</text>
+
+  <circle class="diverge" cx="112" cy="468" r="12"/>
+  <text class="diverge-text" x="112" y="500" text-anchor="middle">首处分叉</text>
+  <rect class="accent" x="172" y="432" width="208" height="76" rx="12"/>
+  <text class="label mono" x="276" y="464" text-anchor="middle">≥ 5 / side</text><text class="sub" x="276" y="488" text-anchor="middle">分桶路径每侧总计 20</text>
+  <rect class="node" x="440" y="432" width="192" height="76" rx="12"/>
+  <text class="label" x="536" y="464" text-anchor="middle">均值比较</text><text class="sub" x="536" y="488" text-anchor="middle">分桶时按模型人口加权</text>
+  <rect class="accent" x="692" y="432" width="192" height="76" rx="12"/>
+  <text class="label" x="788" y="464" text-anchor="middle">平局也晋升</text><text class="sub mono" x="788" y="488" text-anchor="middle">staging ≥ main</text>
+  <rect class="status-good" x="944" y="432" width="240" height="76" rx="12"/>
+  <text class="label mono" x="1064" y="464" text-anchor="middle">14 d timeout</text><text class="sub" x="1064" y="488" text-anchor="middle">样本不足则丢弃 staging</text>
+
+  <rect class="status-warn" x="48" y="552" width="1184" height="76" rx="12"/>
+  <text class="label" x="72" y="584">结论口径</text>
+  <text class="sub" x="196" y="584">论文给出待验证的统计协议；当前产品运行的是启发式均值门槛。不能用论文中的 p = .038 解释当前代码。</text>
+  <text class="sub" x="196" y="608">论文也主动承认用户/会话内相关、optional stopping、多重比较与有界分数问题。</text>
+  <text class="tiny mono" x="48" y="680">source · paper Algorithm 2 / §3.3 · src/xskill/canary.py: CanaryConfig + plan_decision · xskill-wiki lifecycle</text>
+</svg>
+</div></body>
+</html>

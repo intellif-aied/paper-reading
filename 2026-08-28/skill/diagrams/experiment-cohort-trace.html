@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>缩小 cohort 让提交发生，也暴露了边界质量</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.lane-title{font:600 12px "Geist Mono",monospace;letter-spacing:1px;fill:#4f5d75}.label{font-size:16px;font-weight:600;fill:#2d3142}.big{font:600 24px "Geist Mono",monospace;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.tiny{font-size:12px;fill:#4f5d75}.lane{fill:#fff;stroke:#c8cdd7;stroke-width:2}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.good{fill:#e9f5ed;stroke:#2e7d4f;stroke-width:2}.bad{fill:#fff0ee;stroke:#c24b3a;stroke-width:2}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#experiment-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#experiment-arrow-accent)}.flow-link{fill:none;stroke:#2e5aa8;stroke-width:2;marker-end:url(#experiment-arrow-link)}.metric{fill:#2d3142}.metric-text{font:500 12px "Geist Mono",monospace;fill:#fff}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="experiment-title experiment-desc">
+  <title id="experiment-title">缩小 cohort 让 submit_atom 发生，也暴露了边界质量</title>
+  <desc id="experiment-desc">完整长会话包含十四个用户意图，TaskAgent 进行了三十六次 look 和二十九轮推理，消耗六十二万八千二百零五 tokens 却没有 submit_atom。Case2-only 重放在二十四点八秒内提交三个 Atom，但人工预期只有一个，结果包含一次过切和一个 exit 噪声。</desc>
+  <defs>
+    <marker id="experiment-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="experiment-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="experiment-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">PAIRED PROCESS · OBSERVED DATA</text>
+  <text class="title" x="48" y="88">缩小 cohort 让提交发生，也暴露了边界质量</text>
+
+  <rect class="lane" x="48" y="128" width="1184" height="184" rx="16"/>
+  <rect class="lane" x="48" y="336" width="1184" height="224" rx="16"/>
+  <text class="lane-title" x="68" y="156">FULL NATIVE SESSION · ORIGINAL PIPELINE</text>
+  <text class="lane-title" x="68" y="364">CASE 2-ONLY · MECHANICAL REPLAY</text>
+
+  <!-- connectors first -->
+  <path class="flow" d="M328 224 H376"/><path class="flow" d="M624 224 H672"/><path class="flow-accent" d="M920 224 H968"/>
+  <path class="flow" d="M328 432 H376"/><path class="flow" d="M624 432 H672"/><path class="flow-accent" d="M920 432 H968"/>
+
+  <rect class="node" x="96" y="176" width="232" height="96" rx="12"/>
+  <text class="big" x="212" y="212" text-anchor="middle">146 turns</text><text class="sub" x="212" y="236" text-anchor="middle">14 user intents · 44 tool calls</text><text class="sub" x="212" y="256" text-anchor="middle">88,672-byte Bridge</text>
+  <rect class="node" x="388" y="176" width="236" height="96" rx="12"/>
+  <text class="big" x="506" y="212" text-anchor="middle">29 rounds</text><text class="sub" x="506" y="236" text-anchor="middle">36 look · 39 total LLM calls</text><text class="sub" x="506" y="256" text-anchor="middle">628,205 tokens</text>
+  <rect class="bad" x="684" y="176" width="236" height="96" rx="12"/>
+  <text class="big" x="802" y="212" text-anchor="middle">0 submit</text><text class="sub" x="802" y="236" text-anchor="middle">final Atom = 0</text><text class="sub" x="802" y="256" text-anchor="middle">首个语义门未通过</text>
+  <rect class="bad" x="980" y="176" width="204" height="96" rx="12"/>
+  <text class="label" x="1082" y="212" text-anchor="middle">下游未到达</text><text class="sub" x="1082" y="236" text-anchor="middle">cluster · candidate</text><text class="sub" x="1082" y="256" text-anchor="middle">edit · canary</text>
+
+  <rect class="node" x="96" y="384" width="232" height="96" rx="12"/>
+  <text class="big" x="212" y="420" text-anchor="middle">7 headers</text><text class="sub" x="212" y="444" text-anchor="middle">1,040 lines · 41,629 bytes</text><text class="sub" x="212" y="464" text-anchor="middle">人工截取 Case 2</text>
+  <rect class="node" x="388" y="384" width="236" height="96" rx="12"/>
+  <text class="big" x="506" y="420" text-anchor="middle">24.759 s</text><text class="sub" x="506" y="444" text-anchor="middle">7 rounds · 6 look</text><text class="sub" x="506" y="464" text-anchor="middle">同一 TaskAgent 协议</text>
+  <rect class="good" x="684" y="384" width="236" height="96" rx="12"/>
+  <text class="big" x="802" y="420" text-anchor="middle">3 submit</text><text class="sub" x="802" y="444" text-anchor="middle">Atom 已写入持久层</text><text class="sub" x="802" y="464" text-anchor="middle">机制可工作</text>
+  <rect class="accent" x="980" y="384" width="204" height="132" rx="12"/>
+  <text class="label" x="1082" y="416" text-anchor="middle">人工质量审计</text>
+  <text class="sub" x="1082" y="444" text-anchor="middle">1 条符合预期</text>
+  <text class="sub" x="1082" y="464" text-anchor="middle">1 条语义过切</text>
+  <text class="sub mono" x="1082" y="484" text-anchor="middle">1 条 /exit 噪声</text>
+  <text class="sub" x="1082" y="504" text-anchor="middle">预期 case-level = 1</text>
+
+  <rect class="metric" x="96" y="584" width="1088" height="52" rx="12"/>
+  <text class="metric-text" x="120" y="616">READOUT</text>
+  <text class="metric-text" x="236" y="616">上下文规模影响工具遵循；“能提交”与“边界正确”必须拆成两个指标。</text>
+  <text class="tiny mono" x="48" y="680">source · references/claude-minimax-trial-evidence.json · prior report §真实实验 / Case 2 repair replay</text>
+</svg>
+</div></body>
+</html>

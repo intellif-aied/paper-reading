@@ -17,7 +17,7 @@
 | 安装依赖 | 53 个 | `uv pip install -e` 输出；39 个包需准备，准备耗时 2m06s，安装耗时 1.25s |
 | Claude Code | `2.1.204` | 本机 `claude --version` |
 | Claude 请求模型 | `MiniMax-M3` | 本机配置；认证值未读取或记录 |
-| 服务端观测模型 ID | `MiniMax-M3-MXFP8` | 本次 native JSONL 的 91/91 条 assistant 事件 |
+| 服务端观测模型 ID | `MiniMax-M3-MXFP8` | 本次 native JSONL 的 47/47 个唯一 assistant response ID |
 | Herdr 试验 pane | `w2:p3` / `minimax_xskill_trial` | agent 启动时为 `idle`、`interactive_ready=true`；试验后正常退出并回到 shell |
 | 试验工作区 | `/tmp/xskill-minimax-trial-20260825/workload` | 从当前 commit 创建的隔离 clone |
 
@@ -89,17 +89,17 @@ source:     ~/.claude/projects/-tmp-xskill-minimax-trial-20260825-workload/<sess
 | 原生指标 | 实测值 |
 |---|---:|
 | JSONL 大小 / 行数 | 792,658 bytes / 218 行 |
-| assistant / user 事件 | 91 / 56 |
+| assistant event rows / 唯一 response / user 事件 | 91 / 47 / 56 |
 | 工具调用 | 44 |
 | 工具分布 | Bash 25、Read 14、Edit 3、Skill 2 |
 | 真实 Skill 调用 | `diagnosing-bugs` 1、`tdd` 1 |
 | Claude 请求模型 | `MiniMax-M3` |
-| 服务端观测模型 ID | `MiniMax-M3-MXFP8`，91/91 assistant 消息一致 |
-| input / output tokens | 7,223,652 / 22,137 |
+| 服务端观测模型 ID | `MiniMax-M3-MXFP8`，47/47 个唯一 response ID 一致 |
+| input / output tokens | 3,719,340 / 11,441（按 `message.id` 去重） |
 | cache creation / cache read tokens | 0 / 0 |
 | permission-mode 事件 | 12 |
 
-这组数据表明 MiniMax 对边界明确的 TDD 任务能交付正确结果，但本次长会话的上下文效率很差：91 次 assistant 响应累计读取 722 万 input tokens，且缓存命中为 0。开放式缺陷搜索也明显比有验收条件的任务更容易发散。
+这组数据表明 MiniMax 对边界明确的 TDD 任务能交付正确结果，但本次长会话的上下文效率很差：47 个唯一 assistant response 累计读取 371.9 万 input tokens，且缓存命中为 0。JSONL 的 text 与 tool-use event rows 会重复同一个 response usage，逐行累加会把 input / output 分别虚高 94.22% / 93.49%。
 
 ### xskill 采集与标准化结果
 
@@ -120,7 +120,7 @@ Claude 退出后按默认 120 秒 settle barrier 等待，再使用当前安装�
 | sidecar model | `MiniMax-M3-MXFP8` |
 | 标准化 turns / tool calls | 146 / 44 |
 | tool names | Skill、Bash、Read、Edit |
-| Markdown tool call / output 段 | 44 / 45 |
+| Markdown tool call / output 段 | 44 / 44 |
 | `validate_trajectory_source` | `valid=true`，14 个非空 user intent |
 | xskill canary attribution header | 无 |
 
@@ -186,8 +186,8 @@ Native Session
 
 `09:02:54Z` 在真实 HOME 启动后，LLM、embedding、agent worker 和 ecosystem ingester 均正常就绪；但 standalone 会自动发现机器上的**所有**已知 ecosystem，而不是只处理本次 Claude cohort。到 `09:04:42Z` 人工停止时：
 
-- 自动生成了 624 个 Codex bridge 文件，共 137,981,171 bytes；
-- 另生成 6 个不属于本次 cohort 的 Claude bridge 文件；
+- 自动带入 312 条 Codex session，对应 624 个 bridge 文件，共 137,981,171 bytes；
+- 另带入 3 条不属于本次 cohort 的 Claude session，对应 6 个 bridge 文件；
 - registry 自动注册了 `codex` 与 `claude_code` 两个 watch directory；
 - watcher 状态仍为 `polls=0`，目标 Claude 轨迹尚未进入 split，说明启动钩子仍忙于历史 bridge。
 
@@ -268,7 +268,7 @@ Qwen embedding 则通过两级旁路探测：固定文本为 4096 维、177.5ms�
 | Qwen embedding | 接口与真实片段旁路测试通过；Case 2-only 重放停在 split 审计，自动 embed 仍未到达 |
 | Candidate→Skill→canary | 未到达；修复重放没有继续运行下游流水线 |
 | 数据范围控制 | 有风险；真实 HOME 首启自动桥接全机历史，必须先隔离或预算化 backfill |
-| 使用效率 | 风险明显；Claude 会话 722 万 input tokens、零 cache read；xskill split 又消耗 62.8 万 tokens 仍无 Atom |
+| 使用效率 | 风险明显；Claude 会话去重后为 371.9 万 input tokens、零 cache read；xskill split 又消耗 62.8 万 tokens 仍无 Atom |
 
 ## 实验设计与证据口径
 

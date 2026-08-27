@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>当前源码如何生成统一会话副本</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.label{font-size:16px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.tiny{font-size:12px;fill:#4f5d75}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#trajectory-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#trajectory-arrow-accent)}.flow-link{fill:none;stroke:#2e5aa8;stroke-width:2;marker-end:url(#trajectory-arrow-link)}.bus{fill:none;stroke:#4f5d75;stroke-width:2}.boundary{fill:#fff5ef;stroke:#eb6c36;stroke-width:2;stroke-dasharray:8 8}.boundary-label{font:500 12px "Geist Mono",monospace;fill:#a33f1b}.fact{fill:#fff;stroke:#c8cdd7;stroke-width:2}.fact-number{font:600 24px "Geist Mono",monospace;fill:#2d3142}.fact-copy{font-size:12px;fill:#4f5d75}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="trajectory-title trajectory-desc">
+  <title id="trajectory-title">当前源码如何生成统一会话副本</title>
+  <desc id="trajectory-desc">当前源码的九个本地适配器解析、筛选并截断原生会话，生成 Markdown Bridge 与元数据；进入可选的 Team 路径后，客户端再做凭证脱敏和稳定性检查，只上传 Markdown 与少量元数据。论文列出的 Hermes 不在当前源码适配器中。</desc>
+  <defs>
+    <marker id="trajectory-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="trajectory-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="trajectory-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">DATA FLOW · CURRENT SOURCE</text>
+  <text class="title" x="48" y="88">当前源码：原生日志先成为本地 Bridge</text>
+
+  <rect class="boundary" x="776" y="216" width="456" height="248" rx="8"/>
+
+  <!-- connectors first -->
+  <path class="bus" d="M260 164 V500"/>
+  <path class="bus" d="M224 164 H260"/><path class="bus" d="M224 248 H260"/><path class="bus" d="M224 332 H260"/><path class="bus" d="M224 416 H260"/><path class="bus" d="M224 500 H260"/>
+  <path class="flow" d="M260 332 H320"/>
+  <path class="flow-accent" d="M504 332 H544"/>
+  <path class="flow-link" d="M744 332 H800"/>
+  <path class="flow-link" d="M984 332 H1016"/>
+
+  <rect class="node" x="48" y="132" width="176" height="64" rx="8"/><text class="label" x="136" y="160" text-anchor="middle">Claude Code</text><text class="sub mono" x="136" y="180" text-anchor="middle">JSONL</text>
+  <rect class="node" x="48" y="216" width="176" height="64" rx="8"/><text class="label" x="136" y="244" text-anchor="middle">Codex</text><text class="sub mono" x="136" y="264" text-anchor="middle">JSONL</text>
+  <rect class="node" x="48" y="300" width="176" height="64" rx="8"/><text class="label" x="136" y="328" text-anchor="middle">OpenClaw</text><text class="sub mono" x="136" y="348" text-anchor="middle">JSONL</text>
+  <rect class="node" x="48" y="384" width="176" height="64" rx="8"/><text class="label" x="136" y="412" text-anchor="middle">OpenCode</text><text class="sub mono" x="136" y="432" text-anchor="middle">SQLite</text>
+  <rect class="node" x="48" y="468" width="176" height="64" rx="8"/><text class="label" x="136" y="496" text-anchor="middle">其他 5 个适配器</text><text class="sub mono" x="136" y="516" text-anchor="middle">current source</text>
+
+  <rect class="node" x="320" y="268" width="184" height="128" rx="8"/>
+  <text class="label" x="412" y="304" text-anchor="middle">静默门槛 + adapter</text>
+  <text class="sub" x="412" y="332" text-anchor="middle">等待源文件停止写入</text>
+  <text class="sub" x="412" y="352" text-anchor="middle">解析、筛选并截断内容</text>
+  <text class="sub mono" x="412" y="376" text-anchor="middle">quiet gate · adapter</text>
+
+  <rect class="accent" x="544" y="260" width="200" height="144" rx="8"/>
+  <text class="label" x="644" y="296" text-anchor="middle">本地 Bridge</text>
+  <text class="sub mono" x="644" y="324" text-anchor="middle">traj_*.md</text>
+  <text class="sub" x="644" y="348" text-anchor="middle">统一角色与工具段落</text>
+  <text class="sub mono" x="644" y="372" text-anchor="middle">optional metadata JSON</text>
+
+  <text class="boundary-label" x="800" y="244">OPTIONAL TEAM UPLOAD PATH</text>
+  <rect class="node" x="800" y="276" width="184" height="112" rx="8"/>
+  <text class="label" x="892" y="308" text-anchor="middle">凭证脱敏 + 稳定检查</text>
+  <text class="sub" x="892" y="336" text-anchor="middle">内容哈希稳定后上传</text>
+  <text class="sub" x="892" y="360" text-anchor="middle">正则只能降低泄露风险</text>
+
+  <rect class="store" x="1016" y="260" width="192" height="144" rx="8"/>
+  <text class="label" x="1112" y="292" text-anchor="middle">Server 收到</text>
+  <text class="sub mono" x="1040" y="324">markdown</text><text class="sub" x="1132" y="324">会话文本</text>
+  <text class="sub mono" x="1040" y="348">hash</text><text class="sub" x="1132" y="348">内容摘要</text>
+  <text class="sub mono" x="1040" y="372">model</text><text class="sub" x="1132" y="372">模型名</text>
+  <text class="sub mono" x="1040" y="396">harness</text><text class="sub" x="1132" y="396">运行时</text>
+
+  <rect class="fact" x="320" y="520" width="424" height="108" rx="8"/>
+  <text class="fact-number" x="344" y="556">Paper v4 · 5</text>
+  <text class="fact-copy" x="344" y="584">论文列 Claude、Codex、OpenClaw、OpenCode、Hermes。</text>
+  <text class="fact-copy" x="344" y="604">这是论文范围，不代表当前适配器清单。</text>
+  <rect class="fact" x="776" y="520" width="456" height="108" rx="8"/>
+  <text class="fact-number" x="800" y="556">Current source · 9</text>
+  <text class="fact-copy" x="800" y="584">本地源码可探测九个生态；其中没有 Hermes。</text>
+  <text class="fact-copy" x="800" y="604">Team collector 的覆盖范围还要单独检查。</text>
+  <text class="tiny mono" x="48" y="680">source · ecosystems adapters · ecosystems/_shared.py · team/client/collector.py · team/shared/protocol.py · paper §3.1</text>
+</svg>
+</div></body>
+</html>

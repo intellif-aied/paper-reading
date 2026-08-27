@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>评分前必须知道用户实际用了哪个版本</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.lane-title{font:600 12px "Geist Mono",monospace;fill:#4f5d75;letter-spacing:1px}.label{font-size:16px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.tiny{font-size:12px;fill:#4f5d75}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#attribution-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#attribution-arrow-accent)}.flow-link{fill:none;stroke:#2e5aa8;stroke-width:2;marker-end:url(#attribution-arrow-link)}.missing{fill:none;stroke:#c24b3a;stroke-width:3;stroke-dasharray:8 8}.missing-label{font:600 12px "Geist Mono",monospace;fill:#a33f1b}.callout{fill:#fff0ee;stroke:#c24b3a;stroke-width:2}.callout-text{font-size:12px;fill:#7d2f24}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="attribution-title attribution-desc">
+  <title id="attribution-title">评分前必须知道用户实际用了哪个版本</title>
+  <desc id="attribution-desc">团队服务端在 manifest 中选择并下发一个具体 Skill side 和 commit SHA，客户端安装后用户执行任务。当前上传协议没有携带实际 exposure，评分端根据用户与模型重新计算 side，因此可能把体验分记到另一个版本。</desc>
+  <defs>
+    <marker id="attribution-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="attribution-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="attribution-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">FLOWCHART · EXPOSURE ATTRIBUTION</text>
+  <text class="title" x="48" y="88">评分前必须知道用户实际用了哪个版本</text>
+
+  <text class="lane-title" x="48" y="144">ACTUAL DELIVERY</text>
+  <text class="lane-title" x="48" y="396">SCORING PATH</text>
+
+  <!-- connectors first -->
+  <path class="flow-link" d="M312 228 H368"/>
+  <path class="flow" d="M632 228 H688"/>
+  <path class="flow" d="M820 280 V376 H220 V420"/>
+  <path class="missing" d="M952 228 H1120 V376 H1080"/>
+  <path class="flow-accent" d="M352 476 H432"/>
+  <path class="flow-accent" d="M696 476 H776"/>
+
+  <rect class="store" x="48" y="176" width="264" height="104" rx="16"/>
+  <text class="label" x="180" y="212" text-anchor="middle">Manifest 决定版本</text>
+  <text class="sub mono" x="180" y="240" text-anchor="middle">skill = deploy · side = staging</text>
+  <text class="sub mono" x="180" y="260" text-anchor="middle">sha = abc123</text>
+  <rect class="node" x="380" y="176" width="252" height="104" rx="16"/>
+  <text class="label" x="506" y="212" text-anchor="middle">Client 安装该版本</text>
+  <text class="sub" x="506" y="240" text-anchor="middle">目录对齐到 staging / abc123</text>
+  <text class="sub" x="506" y="260" text-anchor="middle">agent 原生 loader 随后读取</text>
+  <rect class="node" x="700" y="176" width="252" height="104" rx="16"/>
+  <text class="label" x="826" y="212" text-anchor="middle">用户完成真实任务</text>
+  <text class="sub" x="826" y="240" text-anchor="middle">会话中产生结果、修正与工具轨迹</text>
+  <text class="sub" x="826" y="260" text-anchor="middle">此时真实 exposure 已确定</text>
+  <rect class="accent" x="1000" y="168" width="232" height="120" rx="16"/>
+  <text class="label" x="1116" y="204" text-anchor="middle">上传协议缺一项</text>
+  <text class="sub" x="1116" y="232" text-anchor="middle">有 Markdown / hash</text>
+  <text class="sub" x="1116" y="252" text-anchor="middle">model / harness</text>
+  <text class="missing-label" x="1116" y="276" text-anchor="middle">没有 side + SHA</text>
+
+  <rect class="node" x="96" y="420" width="256" height="112" rx="16"/>
+  <text class="label" x="224" y="456" text-anchor="middle">TaskAgent 推断 used skill</text>
+  <text class="sub" x="224" y="484" text-anchor="middle">从上传后的会话文本判断</text>
+  <text class="sub" x="224" y="504" text-anchor="middle">用户当时用了哪个 Skill</text>
+  <rect class="accent" x="444" y="420" width="252" height="112" rx="16"/>
+  <text class="label" x="570" y="456" text-anchor="middle">服务端重新算 side</text>
+  <text class="sub mono" x="570" y="484" text-anchor="middle">pick_side_scoped(user, model)</text>
+  <text class="sub" x="570" y="504" text-anchor="middle">未读取实际 manifest assignment</text>
+  <rect class="store" x="788" y="420" width="252" height="112" rx="16"/>
+  <text class="label" x="914" y="456" text-anchor="middle">UX 记入证据账本</text>
+  <text class="sub mono" x="914" y="484" text-anchor="middle">main / staging · SHA · score</text>
+  <text class="sub" x="914" y="504" text-anchor="middle">Canary 之后按这些行裁决</text>
+
+  <rect class="callout" x="1080" y="408" width="152" height="148" rx="12"/>
+  <text class="missing-label" x="1156" y="440" text-anchor="middle">RISK</text>
+  <text class="callout-text" x="1100" y="472">管理员 override、</text>
+  <text class="callout-text" x="1100" y="492">小团队配额修正、</text>
+  <text class="callout-text" x="1100" y="512">服务重启后，</text>
+  <text class="callout-text" x="1100" y="532">两次 side 可不同。</text>
+
+  <rect class="callout" x="48" y="584" width="1184" height="60" rx="12"/>
+  <text class="missing-label" x="72" y="620">最低数据契约</text>
+  <text class="callout-text" x="224" y="620">在实际下发时持久记录 (user, skill, side, SHA)，并随结果回传；评分时禁止重新推算 exposure。</text>
+  <text class="tiny mono" x="48" y="688">source · team/shared/protocol.py · team/server/skill_manifest.py · pipeline/runner.py: UX attribution</text>
+</svg>
+</div></body>
+</html>

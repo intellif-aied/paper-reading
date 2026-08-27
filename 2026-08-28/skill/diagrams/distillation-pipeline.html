@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>三 Agent 流水线把证据逐级收窄</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.lane-title{font:600 12px "Geist Mono",monospace;fill:#4f5d75;letter-spacing:1px}.label{font-size:16px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.tiny{font-size:12px;fill:#4f5d75}.lane{fill:#fff;stroke:#c8cdd7;stroke-width:2}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#pipeline-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#pipeline-arrow-accent)}.flow-link{fill:none;stroke:#2e5aa8;stroke-width:2;marker-end:url(#pipeline-arrow-link)}.callout{fill:#fff8e8;stroke:#d6a63c;stroke-width:2}.callout-text{font-size:12px;fill:#604a18}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pipeline-title pipeline-desc">
+  <title id="pipeline-title">三 Agent 流水线把一段会话逐级收窄</title>
+  <desc id="pipeline-desc">TaskAgent 切分用户意图并独立生成 UX score；TaskClusterAgent 另行判断 Atom 对 Skill 的 weightscore；SkillEditAgent 在候选权重达到十后改写 Skill 目录并提交 Git 版本。</desc>
+  <defs>
+    <marker id="pipeline-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="pipeline-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="pipeline-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">PROCESS · THREE AGENTS</text>
+  <text class="title" x="48" y="88">三 Agent 流水线把证据逐级收窄</text>
+
+  <rect class="lane" x="48" y="120" width="1184" height="144" rx="16"/>
+  <rect class="lane" x="48" y="280" width="1184" height="144" rx="16"/>
+  <rect class="lane" x="48" y="440" width="1184" height="144" rx="16"/>
+
+  <!-- connectors first -->
+  <path class="flow" d="M328 192 H384"/>
+  <path class="flow-accent" d="M664 192 H720"/>
+  <path class="flow-accent" d="M852 232 V292 H204 V312"/>
+  <path class="flow" d="M328 352 H384"/>
+  <path class="flow" d="M664 352 H720"/>
+  <path class="flow" d="M852 392 V452 H204 V472"/>
+  <path class="flow" d="M328 512 H384"/>
+  <path class="flow-link" d="M664 512 H720"/>
+
+  <text class="lane-title" x="68" y="144">TASKAGENT · SEMANTIC SEGMENTATION</text>
+  <rect class="node" x="160" y="156" width="168" height="76" rx="12"/>
+  <text class="label" x="244" y="188" text-anchor="middle">Trajectory</text><text class="sub" x="244" y="212" text-anchor="middle">完整连续会话</text>
+  <rect class="node" x="396" y="148" width="256" height="92" rx="12"/>
+  <text class="label" x="524" y="180" text-anchor="middle">定位任务切换</text><text class="sub" x="524" y="204" text-anchor="middle">先看用户提问索引</text><text class="sub" x="524" y="224" text-anchor="middle">需要时再读局部原文</text>
+  <rect class="accent" x="732" y="148" width="240" height="92" rx="12"/>
+  <text class="label" x="852" y="180" text-anchor="middle">保存任务片段</text><text class="sub mono" x="852" y="204" text-anchor="middle">submit_atom(start, end, ux_score)</text><text class="sub" x="852" y="224" text-anchor="middle">Atom、used_skills 与 UX 分</text>
+
+  <text class="lane-title" x="68" y="304">TASKCLUSTERAGENT · ROUTING</text>
+  <rect class="node" x="160" y="316" width="168" height="76" rx="12"/>
+  <text class="label" x="244" y="348" text-anchor="middle">Atom</text><text class="sub" x="244" y="372" text-anchor="middle">一个连续用户意图</text>
+  <rect class="node" x="396" y="308" width="256" height="92" rx="12"/>
+  <text class="label" x="524" y="340" text-anchor="middle">查找已有 Skill</text><text class="sub" x="524" y="364" text-anchor="middle">对比整个 catalog</text><text class="sub" x="524" y="384" text-anchor="middle">归入已有 / 创建新 Skill</text>
+  <rect class="store" x="732" y="308" width="240" height="92" rx="12"/>
+  <text class="label" x="852" y="340" text-anchor="middle">候选证据账本</text><text class="sub mono" x="852" y="364" text-anchor="middle">atom_id → weightscore</text><text class="sub" x="852" y="384" text-anchor="middle">证据按 Skill 累加</text>
+
+  <text class="lane-title" x="68" y="464">SKILLEDITAGENT · VERSIONED EDIT</text>
+  <rect class="node" x="160" y="476" width="168" height="76" rx="12"/>
+  <text class="label mono" x="244" y="508" text-anchor="middle">Σ weight ≥ 10</text><text class="sub" x="244" y="532" text-anchor="middle">触发条件</text>
+  <rect class="node" x="396" y="468" width="256" height="92" rx="12"/>
+  <text class="label" x="524" y="500" text-anchor="middle">改写 Skill 目录</text><text class="sub" x="524" y="524" text-anchor="middle">综合候选与原始任务证据</text><text class="sub" x="524" y="544" text-anchor="middle">工具提交 Git checkpoint</text>
+  <rect class="store" x="732" y="468" width="240" height="92" rx="12"/>
+  <text class="label" x="852" y="500" text-anchor="middle">Git branch transition</text><text class="sub" x="852" y="524" text-anchor="middle">Baby → Main</text><text class="sub" x="852" y="544" text-anchor="middle">Main → Staging</text>
+
+  <rect class="callout" x="996" y="148" width="212" height="412" rx="12"/>
+  <text class="label" x="1020" y="184">两次独立判断</text>
+  <text class="callout-text" x="1020" y="220">UX score · TaskAgent</text><text class="sub" x="1020" y="244">评价任务结果</text><text class="sub" x="1020" y="264">后续归因到版本账本</text>
+  <text class="callout-text" x="1020" y="300">Weightscore · TCA</text><text class="sub" x="1020" y="324">评价复用相关性</text><text class="sub" x="1020" y="344">累计至 10 触发编辑</text>
+  <line x1="1020" y1="364" x2="1184" y2="364" stroke="#d6a63c" stroke-width="2"/>
+  <text class="callout-text" x="1020" y="396">取值都为 1–10</text>
+  <text class="sub" x="1020" y="424">生产者、含义和去向</text><text class="sub" x="1020" y="444">各自独立；源码没有</text><text class="sub" x="1020" y="464">复用同一个分数。</text>
+  <text class="tiny mono" x="48" y="632">source · agents/task_agent.py · pipeline/atom.py · agents/task_cluster_agent.py · skill/candidates.py · agents/skill_edit_agent.py</text>
+</svg>
+</div></body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>分支状态与分发状态是两套轴</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.label{font-size:20px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.edge-label{font:500 12px "Geist Mono",monospace;fill:#4f5d75}.tiny{font-size:12px;fill:#4f5d75}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.frozen{fill:#edf0f4;stroke:#4f5d75;stroke-width:2;stroke-dasharray:8 8}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#state-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#state-arrow-accent)}.flow-link{fill:none;stroke:#2e5aa8;stroke-width:2;marker-end:url(#state-arrow-link)}.flow-dashed{fill:none;stroke:#4f5d75;stroke-width:2;stroke-dasharray:8 8;marker-end:url(#state-arrow)}.mask{fill:#f5f5f5}.axis{fill:#fff;stroke:#c8cdd7;stroke-width:2}.axis-title{font:600 12px "Geist Mono",monospace;letter-spacing:1px;fill:#4f5d75}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="state-title state-desc">
+  <title id="state-title">Baby、Main、Staging 是 Git 分支，Frozen 是元数据状态</title>
+  <desc id="state-desc">新 Skill 从 Baby 分批 checkpoint 后毕业到 Main；既有 Skill 的候选进入 Staging，晋升时合并到 Main，拒绝时保留 rejected ref。Frozen 是独立的 metadata 标记，不等同于 canary 拒绝。</desc>
+  <defs>
+    <marker id="state-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="state-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="state-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">STATE MACHINE · TWO AXES</text>
+  <text class="title" x="48" y="88">分支状态与分发状态是两套轴</text>
+
+  <rect class="axis" x="48" y="124" width="1184" height="332" rx="16"/>
+  <text class="axis-title" x="68" y="152">GIT BRANCH STATE</text>
+  <rect class="axis" x="48" y="480" width="1184" height="140" rx="16"/>
+  <text class="axis-title" x="68" y="508">DISTRIBUTION METADATA</text>
+
+  <!-- connectors first -->
+  <path class="flow-accent" d="M124 284 H180"/>
+  <path class="flow" d="M388 284 H500"/>
+  <path class="flow" d="M708 284 H820"/>
+  <path class="flow-accent" d="M924 232 V180 H604 V220"/>
+  <path class="flow-link" d="M1028 284 H1084"/>
+  <path class="flow-dashed" d="M604 340 V492"/>
+  <path class="flow-dashed" d="M760 552 H820"/>
+
+  <circle cx="96" cy="284" r="16" fill="#2d3142"/>
+  <rect class="accent" x="192" y="220" width="196" height="128" rx="16"/>
+  <text class="label" x="290" y="264" text-anchor="middle">Baby</text>
+  <text class="sub" x="290" y="292" text-anchor="middle">新 Skill 的 WIP 分支</text>
+  <text class="sub" x="290" y="316" text-anchor="middle">默认每 5 条候选 checkpoint</text>
+  <rect class="node" x="512" y="220" width="196" height="128" rx="16"/>
+  <text class="label" x="610" y="264" text-anchor="middle">Main</text>
+  <text class="sub" x="610" y="292" text-anchor="middle">当前可分发版本</text>
+  <text class="sub" x="610" y="316" text-anchor="middle">既有更新需真实 main UX</text>
+  <rect class="accent" x="832" y="220" width="196" height="128" rx="16"/>
+  <text class="label" x="930" y="264" text-anchor="middle">Staging</text>
+  <text class="sub" x="930" y="292" text-anchor="middle">同时最多一个 canary</text>
+  <text class="sub" x="930" y="316" text-anchor="middle">后续候选先 hold</text>
+  <rect class="store" x="1096" y="236" width="112" height="96" rx="12"/>
+  <text class="label" x="1152" y="272" text-anchor="middle">Rejected</text>
+  <text class="sub mono" x="1152" y="296" text-anchor="middle">refs/rejected/*</text>
+  <text class="sub" x="1152" y="316" text-anchor="middle">仍可审计</text>
+
+  <rect class="mask" x="420" y="264" width="72" height="40" rx="8"/>
+  <text class="edge-label" x="456" y="280" text-anchor="middle">清空首轮</text><text class="edge-label" x="456" y="296" text-anchor="middle">候选后毕业</text>
+  <rect class="mask" x="740" y="264" width="72" height="40" rx="8"/>
+  <text class="edge-label" x="776" y="280" text-anchor="middle">新候选</text><text class="edge-label" x="776" y="296" text-anchor="middle">写入 staging</text>
+  <rect class="mask" x="680" y="160" width="164" height="36" rx="8"/>
+  <text class="edge-label" x="762" y="184" text-anchor="middle">staging ≥ main → merge</text>
+  <rect class="mask" x="1040" y="264" width="40" height="40" rx="8"/>
+  <text class="edge-label" x="1060" y="280" text-anchor="middle">低于</text><text class="edge-label" x="1060" y="296" text-anchor="middle">main</text>
+
+  <rect class="frozen" x="512" y="516" width="236" height="76" rx="16"/>
+  <text class="label" x="630" y="548" text-anchor="middle">Frozen</text>
+  <text class="sub mono" x="630" y="572" text-anchor="middle">metadata.frozen = true</text>
+  <rect class="node" x="832" y="516" width="300" height="76" rx="16"/>
+  <text class="label" x="982" y="548" text-anchor="middle">不再主动分发</text>
+  <text class="sub" x="982" y="572" text-anchor="middle">可 unfreeze；历史与 Git 版本仍保留</text>
+  <rect class="mask" x="608" y="404" width="116" height="40" rx="8"/>
+  <text class="edge-label" x="666" y="420" text-anchor="middle">显式 freeze</text><text class="edge-label" x="666" y="436" text-anchor="middle">不是 canary 拒绝</text>
+  <text class="tiny mono" x="48" y="672">source · skill/git.py · agents/skill_edit_agent.py · canary.py · skill/skill.py</text>
+</svg>
+</div></body>
+</html>

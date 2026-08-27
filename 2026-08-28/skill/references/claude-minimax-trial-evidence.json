@@ -29,6 +29,7 @@
     "bytes": 792658,
     "jsonl_lines": 218,
     "assistant_events": 91,
+    "assistant_unique_responses": 47,
     "user_events": 56,
     "permission_mode_events": 12,
     "tool_calls": 44,
@@ -43,8 +44,9 @@
       "tdd": 1
     },
     "usage": {
-      "input_tokens": 7223652,
-      "output_tokens": 22137,
+      "input_tokens": 3719340,
+      "output_tokens": 11441,
+      "counting_method": "deduplicated_by_message_id",
       "cache_creation_input_tokens": 0,
       "cache_read_input_tokens": 0
     },

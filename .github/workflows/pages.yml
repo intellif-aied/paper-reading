@@ -24,9 +24,9 @@ jobs:
         with:
           source: ./
           destination: ./_site
-      - name: Verify disclosure rendering
+      - name: Verify XSkill pages
         run: >-
-          node -e 'const s=require("fs").readFileSync("_site/2026-08-28/skill/index.html","utf8");const b=[...s.matchAll(/<details[\s\S]*?<\/details>/g)].map(x=>x[0]);const bad=b.filter(x=>/`[^`]+`|\[[^\]]+\]\([^)]+\)/.test(x));const rawAlert=/\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/.test(s);console.log(`details=${b.length} broken=${bad.length} raw_alert=${rawAlert}`);if(b.length!==6||bad.length||rawAlert)process.exit(1)'
+          node -e 'const fs=require("fs");const dir="_site/2026-08-28/skill/";const paths=["index.html","report.html","reanalysis.html","narratives.html"];const pages=Object.fromEntries(paths.map(p=>[p,fs.readFileSync(dir+p,"utf8")]));const s=pages["index.html"];const slides=(s.match(/<section class="slide/g)||[]).length;const frames=(s.match(/<iframe class="diagram"/g)||[]).length;const ids=[...s.matchAll(/\sid="([^"]+)"/g)].map(x=>x[1]);const duplicateIds=ids.filter((x,i)=>ids.indexOf(x)!==i);const rootAssets=[...s.matchAll(/(?:src|href)="\/(?!\/)/g)];const required=/三种叙事方案/.test(pages["report.html"])&&[/方案 A/,/方案 B/,/方案 C/].every(x=>x.test(pages["narratives.html"]))&&/Exposure attribution/.test(pages["reanalysis.html"]);console.log({slides,frames,duplicateIds:duplicateIds.length,rootAssets:rootAssets.length,pages:paths.length,required});if(slides!==26||frames<9||duplicateIds.length||rootAssets.length||!required)process.exit(1)'
       - uses: actions/upload-pages-artifact@v3
 
   deploy:

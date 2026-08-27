@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>两个分数控制两个不同决策</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.label{font-size:20px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.formula{font:500 16px "Geist Mono",monospace;fill:#2d3142}.tiny{font-size:12px;fill:#4f5d75}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#control-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#control-arrow-accent)}.flow-link{fill:none;stroke:#2e5aa8;stroke-width:2;marker-end:url(#control-arrow-link)}.paper{fill:#fff8e8;stroke:#d6a63c;stroke-width:2}.code{fill:#edf0f4;stroke:#4f5d75;stroke-width:2}.tag{font:600 12px "Geist Mono",monospace;letter-spacing:1px;fill:#4f5d75}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="control-title control-desc">
+  <title id="control-title">Weightscore 与 UX score 控制不同决策</title>
+  <desc id="control-desc">Atom 的 weightscore 按 Skill 累加，达到十后触发 SkillEdit。版本归因后的 UX score 比较 Main 与 Staging，决定晋升或拒绝。论文把 UX 描述为可观测行为公式，当前源码则让 LLM 按 rubric 直接输出一到十分。</desc>
+  <defs>
+    <marker id="control-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="control-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="control-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">CONTROL POINTS · SIGNAL PROVENANCE</text>
+  <text class="title" x="48" y="88">两个分数控制两个不同决策</text>
+
+  <!-- connectors first -->
+  <path class="flow-accent" d="M292 228 H364"/><path class="flow-accent" d="M596 228 H668"/>
+  <path class="flow-link" d="M292 500 H364"/><path class="flow-link" d="M596 500 H668"/>
+
+  <text class="tag" x="48" y="148">WHEN TO EDIT</text>
+  <rect class="node" x="48" y="176" width="244" height="104" rx="16"/>
+  <text class="label" x="170" y="216" text-anchor="middle">Atom evidence</text><text class="sub" x="170" y="244" text-anchor="middle">每条 1–10 weightscore</text><text class="sub" x="170" y="264" text-anchor="middle">按 atom_id 去重</text>
+  <rect class="accent" x="376" y="176" width="220" height="104" rx="16"/>
+  <text class="formula" x="486" y="216" text-anchor="middle">Σ weight ≥ 10</text><text class="sub" x="486" y="244" text-anchor="middle">当前实现允许单条 10</text><text class="sub" x="486" y="264" text-anchor="middle">论文“2–3 trajectories”不成立</text>
+  <rect class="store" x="680" y="176" width="252" height="104" rx="16"/>
+  <text class="label" x="806" y="216" text-anchor="middle">Run SkillEdit</text><text class="sub" x="806" y="244" text-anchor="middle">Baby checkpoint 或</text><text class="sub" x="806" y="264" text-anchor="middle">Main → Staging</text>
+  <rect class="paper" x="968" y="176" width="264" height="104" rx="16"/>
+  <text class="tag" x="992" y="208">CONSEQUENCE</text><text class="sub" x="992" y="236">阈值是触发器，不是质量证明。</text><text class="sub" x="992" y="256">一条高分即可启动改写。</text>
+
+  <line x1="48" y1="336" x2="1232" y2="336" stroke="#c8cdd7" stroke-width="2"/>
+  <text class="tag" x="48" y="420">WHICH VERSION SHIPS</text>
+  <rect class="node" x="48" y="448" width="244" height="104" rx="16"/>
+  <text class="label" x="170" y="488" text-anchor="middle">Attributed UX</text><text class="sub" x="170" y="516" text-anchor="middle">side + commit SHA + score</text><text class="sub" x="170" y="536" text-anchor="middle">真实流量样本</text>
+  <rect class="store" x="376" y="448" width="220" height="104" rx="16"/>
+  <text class="formula" x="486" y="488" text-anchor="middle">staging ≥ main</text><text class="sub" x="486" y="516" text-anchor="middle">当前代码：均值或分桶加权</text><text class="sub" x="486" y="536" text-anchor="middle">平局晋升</text>
+  <rect class="store" x="680" y="448" width="252" height="104" rx="16"/>
+  <text class="label" x="806" y="488" text-anchor="middle">Promote / reject</text><text class="sub" x="806" y="516" text-anchor="middle">合并 main 或保留</text><text class="sub mono" x="806" y="536" text-anchor="middle">refs/rejected/*</text>
+  <rect class="code" x="968" y="404" width="264" height="192" rx="16"/>
+  <text class="tag" x="992" y="436">PAPER</text>
+  <text class="formula" x="992" y="468">5·completion</text><text class="formula" x="992" y="492">+ 3·(1−min(c/3,1))</text><text class="formula" x="992" y="516">+ 2·attribution</text>
+  <text class="tag" x="992" y="552">CURRENT SOURCE</text>
+  <text class="sub" x="992" y="576">LLM 读会话后按 rubric 直接给 1–10。</text>
+
+  <text class="tiny mono" x="48" y="652">source · paper Eq. 1 / Algorithm 1 · pipeline/atom.py: score_atom · agents/task_agent.py · skill/candidates.py</text>
+</svg>
+</div></body>
+</html>
