@@ -65,8 +65,10 @@ Claude Code 与 Codex 使用不同的会话源和 Skill discovery root：
 
 安装的是完整 Skill 目录，而不只是一个 prompt 字符串。共享 installer 优先建立 symlink；Windows 上可退化为 junction；都不可用时才复制。这个差异很实际：链接指向 working copy，源目录更新后目标立即可见；copy 只是安装时快照，后续必须重新安装。
 
-> [!IMPORTANT]
-> XSkill 源码只能证明“目录被放进 discovery root”。什么时候扫描目录、如何把 `SKILL.md` 加进模型上下文，属于 Codex / Claude Code 自己的实现，不能从 XSkill 源码继续外推。
+<aside role="note" aria-label="重要说明" style="margin: 1.25rem 0; padding: 0.9rem 1rem; border-left: 4px solid #eb6c36; border-radius: 0.35rem; background: #fff7ed; color: #2d2520;">
+  <p style="margin: 0 0 0.35rem;"><strong>Important</strong></p>
+  <p style="margin: 0;">XSkill 源码只能证明“目录被放进 discovery root”。什么时候扫描目录、如何把 <code>SKILL.md</code> 加进模型上下文，属于 Codex / Claude Code 自己的实现，不能从 XSkill 源码继续外推。</p>
+</aside>
 
 <details markdown="1">
 <summary><strong>展开源码入口：init、connect 与 installer</strong></summary>

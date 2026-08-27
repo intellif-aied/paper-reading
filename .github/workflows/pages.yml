@@ -26,7 +26,7 @@ jobs:
           destination: ./_site
       - name: Verify disclosure rendering
         run: >-
-          node -e 'const s=require("fs").readFileSync("_site/2026-08-28/skill/index.html","utf8");const b=[...s.matchAll(/<details[\s\S]*?<\/details>/g)].map(x=>x[0]);const bad=b.filter(x=>/`[^`]+`|\[[^\]]+\]\([^)]+\)/.test(x));console.log(`details=${b.length} broken=${bad.length}`);if(b.length!==6||bad.length)process.exit(1)'
+          node -e 'const s=require("fs").readFileSync("_site/2026-08-28/skill/index.html","utf8");const b=[...s.matchAll(/<details[\s\S]*?<\/details>/g)].map(x=>x[0]);const bad=b.filter(x=>/`[^`]+`|\[[^\]]+\]\([^)]+\)/.test(x));const rawAlert=/\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/.test(s);console.log(`details=${b.length} broken=${bad.length} raw_alert=${rawAlert}`);if(b.length!==6||bad.length||rawAlert)process.exit(1)'
       - uses: actions/upload-pages-artifact@v3
 
   deploy:
