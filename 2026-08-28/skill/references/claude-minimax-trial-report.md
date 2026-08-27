@@ -4,7 +4,7 @@
 
 本节只记录已经发生且可复核的结果；尚未运行的项目继续保留在后文“实验设计与证据口径”中。
 
-脱敏机器可读证据见 [`docs/claude-minimax-trial-evidence.json`](./claude-minimax-trial-evidence.json)。其中只保存计数、测试结果和 SHA-256，不复制 prompt、API key、模型端点或会话正文。
+脱敏机器可读证据见 [`claude-minimax-trial-evidence.json`](./claude-minimax-trial-evidence.json)。其中只保存计数、测试结果和 SHA-256，不复制 prompt、API key、模型端点或会话正文。
 
 ### 环境与安装结果
 
@@ -120,7 +120,7 @@ Claude 退出后按默认 120 秒 settle barrier 等待，再使用当前安装�
 
 ### xskill 的领域概念：不能混用的几组词
 
-完整、可复用的领域词汇表已整理到 [`CONTEXT.md`](../CONTEXT.md)。理解 xskill 最短的心智模型是：
+完整、可复用的领域词汇表已整理到 [`CONTEXT.md`](./CONTEXT.md)。理解 xskill 最短的心智模型是：
 
 ```text
 Native Session

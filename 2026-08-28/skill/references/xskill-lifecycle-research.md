@@ -45,7 +45,7 @@ xskill init / connect
 
 ## 0. 先建立 xskill 的领域词汇
 
-这套系统最容易被误读的地方，是把“文件处理阶段”当成同义词。完整规范词汇表见 [`CONTEXT.md`](../CONTEXT.md)；源码中的最小领域模型是：
+这套系统最容易被误读的地方，是把“文件处理阶段”当成同义词。完整规范词汇表见 [`CONTEXT.md`](./CONTEXT.md)；源码中的最小领域模型是：
 
 ```text
 Ecosystem
