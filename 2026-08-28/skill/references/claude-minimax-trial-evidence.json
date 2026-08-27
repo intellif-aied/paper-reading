@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "trial_id": "claude-minimax-xskill-20260825",
   "t0_utc": "2026-08-25T08:27:25Z",
   "repo_commit": "bc9bf941662467ac711523e450968f2677cd230e",
@@ -7,7 +7,9 @@
     "xskill_version": "0.0.1.dev1+unknown.gbc9bf9416",
     "python_version": "3.13.14",
     "claude_code_version": "2.1.204",
+    "configured_claude_model": "MiniMax-M3",
     "observed_model_id": "MiniMax-M3-MXFP8",
+    "configured_distillation_model": "MiniMax-M3",
     "herdr_pane": "w2:p3",
     "isolated_workload": "/tmp/xskill-minimax-trial-20260825/workload"
   },
@@ -49,6 +51,10 @@
     "sha256": "72ec5d13768e432d5ed58303bb939a90f7e8afb890b1e5725148920aaab24d58"
   },
   "workload": {
+    "pilot_status": "discarded_no_failing_reproduction",
+    "primary_case": "xskill registry list --json",
+    "tasks_shared_one_native_session": true,
+    "cohort_note": "the experiment controller reused one Claude session; xskill did not merge distinct sessions",
     "initial_debug_test": "30 passed in 17.78s",
     "tdd_red": "2 failed, 1 passed",
     "tdd_green": "41 passed in 13.38s",
@@ -61,6 +67,8 @@
   },
   "bridge": {
     "status": "stored",
+    "default_scan_scope": "<home>/.claude/projects/*/*.jsonl",
+    "isolation_unit": "one native session JSONL per trajectory",
     "trajectory_id": "traj_cc_workload_1bc5c4df",
     "latency_seconds_from_final_source_mtime": 135.131,
     "markdown_bytes": 88672,
@@ -163,6 +171,41 @@
     "config_mode": "0600",
     "isolated_config_removed_after_run": true,
     "settle_seconds": 10,
-    "limitation": "bridge and discovery passed, but MiniMax TaskAgent never called submit_atom; automatic embedding, clustering, SkillEdit, reinjection, and canary were not reached"
+    "limitation": "in the original full-session cohort, bridge and discovery passed but TaskAgent never called submit_atom; automatic embedding, clustering, SkillEdit, reinjection, and canary were not reached"
+  },
+  "repair_replay": {
+    "run_at_utc_date": "2026-08-27",
+    "kind": "derived_case2_only_taskagent_replay",
+    "source_trajectory": "traj_cc_workload_1bc5c4df.md",
+    "source_line_range": [1181, 2220],
+    "derived_trajectory": {
+      "bytes": 41629,
+      "lines": 1040,
+      "user_headers": 7,
+      "sha256": "90e2f281eaff037dd716ae0351d760617e7023ef2dbc4a2d920dbe102193e613"
+    },
+    "configured_claude_model": "MiniMax-M3",
+    "source_response_model_id": "MiniMax-M3-MXFP8",
+    "configured_distillation_model": "MiniMax-M3",
+    "duration_seconds": 24.759,
+    "rounds": 7,
+    "look_tool_calls": 6,
+    "submit_atom_tool_calls": 3,
+    "atoms_persisted": 3,
+    "atom_start_lines": [1, 817, 1028],
+    "quality_review": {
+      "expected_case_level_atoms": 1,
+      "over_split_boundaries": 1,
+      "noise_atoms": 1,
+      "semantically_acceptable": false,
+      "findings": [
+        "the red and green phases of one task were split into separate atoms",
+        "the final slash-exit exchange was persisted as a noise atom"
+      ]
+    },
+    "usage_ledger_enabled": false,
+    "automatic_embedding_reached": false,
+    "candidate_to_canary_verified": false,
+    "limitation": "derived split-only replay; not a new native session and not a downstream pipeline run"
   }
 }

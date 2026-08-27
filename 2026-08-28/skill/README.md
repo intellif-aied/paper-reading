@@ -18,13 +18,13 @@ permalink: /2026-08-28/skill/
 2. Coding agent 会话结束后，为什么不是立刻进入学习流水线？
 3. Trajectory、Atom、Candidate、Skill 分别是什么，为什么不能混用？
 4. Weightscore 与 UX Score 各自控制哪一个决策？
-5. 本次真实实验到底证明了哪些阶段，又在哪一步失败？
+5. 本次真实实验哪些阶段通过、部分通过或仍未到达？
 
 ## 第一层：先看整体闭环
 
 ![XSkill self-evolution loop](./diagrams/xskill-self-evolution-loop.svg)
 
-<sub>图源：[HTML](./diagrams/xskill-self-evolution-loop.html)。实线是一次工作循环，虚线是每一步向中央持久状态回写证据；橙色 Atom 节点是本次实验没有通过的关口。</sub>
+<sub>图源：[HTML](./diagrams/xskill-self-evolution-loop.html)。实线是一次工作循环，虚线是每一步向中央持久状态回写证据；橙色 Atom 节点表示混合结果：原始多 Case 长会话 0 提交，Case 2-only 重放已提交 3 个 Atom，但质量审计发现 2 个语义误切。</sub>
 
 一句话概括：**XSkill 用文件协议接在 coding harness 两端——把 Skill 目录装进去，再把原生会话文件读出来；中间把一次会话逐级提炼为可版本化的 Skill，最后重新安装到下一轮 agent session。**
 
@@ -84,7 +84,7 @@ Claude Code 与 Codex 使用不同的会话源和 Skill discovery root：
 
 ![Native session to Skill evidence](./diagrams/session-to-skill-data-flow.svg)
 
-<sub>图源：[HTML](./diagrams/session-to-skill-data-flow.html)。数据形态依次从原生事件、session 数据、结构化证据变为 Git-backed Skill；TaskAgent 是本次实验的第一处真实失败。</sub>
+<sub>图源：[HTML](./diagrams/session-to-skill-data-flow.html)。数据形态依次从原生事件、session 数据、结构化证据变为 Git-backed Skill；TaskAgent 是本次实验的第一处质量关口：完整长会话失败，Case 2-only 重放能提交但发生过切。</sub>
 
 Standalone 的默认语义不是“收到 session-ended 回调”，而是：
 
@@ -253,14 +253,23 @@ TaskAgent 不是一次 JSON completion。它需要多轮读取长 Trajectory，�
 |---|---|
 | 源码 | `bc9bf941662467ac711523e450968f2677cd230e` |
 | Claude Code | `2.1.204` |
-| Coding model | `MiniMax-M3`；原生响应 ID `MiniMax-M3-MXFP8` |
+| Claude 请求模型 | `MiniMax-M3` |
+| 服务端观测模型 ID | `MiniMax-M3-MXFP8` |
 | Embedding | `qwen3-vl-embedding`，4096 维 |
 | 隔离 workload | `/tmp/xskill-minimax-trial-20260825/workload` |
 | 新 Claude session | 1 条，17 分 03.734 秒 |
 
-### 两个 coding case
+### 主 Case 与被淘汰的 Pilot
 
-#### Case 1：开放式寻找 Claude ingestion 边界缺陷
+原始 Claude session 连续执行了两个任务。为了避免把开放式探索、任务中断和有效 TDD 修复混成一个学习样本，修复实验只保留 Case 2；Case 1 仅作为被淘汰的 pilot 记录，不再承担主结论。
+
+#### 为什么两个任务会混在一起？
+
+因为实验控制端复用了同一个 Claude 顶层 session，不是模型或 xskill 配置写错。XSkill 默认扫描 `<home>/.claude/projects/*/*.jsonl` 下的所有新会话，但隔离单位是 native session：**一个 JSONL / `session_id` 生成一条 Trajectory，不会把不同 session 拼接。** 同一 session 里的多个任务则先被完整保留，之后才由 TaskAgent 按用户意图拆成 Atom。
+
+这意味着：对生产数据，多意图 session 是合法压力测试；对 Case 2 的干净实验，复用 session 是设计失误。隔离 HOME 只能限制扫描到哪些 session，不能自动拆开一个 session 内的多个任务。正确做法是每个 Case 新开 Claude session，或在 split 实验中使用受控的单 Case Trajectory。
+
+#### Pilot（淘汰）：开放式寻找 Claude ingestion 边界缺陷
 
 任务先运行：
 
@@ -272,7 +281,7 @@ pytest -q tests/test_claude_code_ecosystem.py tests/test_cli_init.py
 
 **它实际测到的是开放式 diagnosis 能否收敛，不是一次成功修复。** 这个 case 没有已知 issue、失败测试或标准 oracle，实验设计偏弱。
 
-#### Case 2：给 `xskill registry list` 增加 `--json`
+#### Primary Case：给 `xskill registry list` 增加 `--json`
 
 验收条件：保留文本输出；JSON 是顶层数组；每个 watch directory 固定包含 `id`、`label`、`ecosystem`、`path`、`trajectories`、`indexed`；空 registry 输出 `[]`；只用标准库；先 red 后 green。
 
@@ -285,6 +294,8 @@ pytest -q tests/test_claude_code_ecosystem.py tests/test_cli_init.py
 | 独立复核 | 71 passed in 14.29s，`git diff --check` 通过 |
 
 这是一次成功但带人工澄清的功能实现：初始 prompt 因格式问题丢失命令名，模型根据上下文推断为 `registry list`，之后实验控制端明确补充了命令与六个字段。它适合验证真实 Read / Bash / Edit / test 轨迹采集，不应包装成完全无干预 benchmark。
+
+因此回答“是否直接用第二个实验就够”：**对本次生命周期烟测，够；对 coding 能力 benchmark，不够。** 它有完整 red→green→独立复核链，能提供可提取证据；但仍是围绕 XSkill 临时设计的单例，不能替代 SWE-bench。
 
 ### 采集与 Bridge：通过
 
@@ -299,7 +310,9 @@ pytest -q tests/test_claude_code_ecosystem.py tests/test_cli_init.py
 
 真实 `diagnosing-bugs` 与 `tdd` Skill tool call 各出现 1 次；session、model、工具调用和标准 Markdown / sidecar 均成功保持。
 
-### 自动提取：失败在 TaskAgent，没有 Atom
+### 自动提取：原始失败，Case 2-only 重放部分通过
+
+#### 原始完整会话：0 Atom
 
 隔离 HOME 只放一条目标 session 后，daemon 成功启动，Bridge 和 registry 成功，随后：
 
@@ -314,9 +327,44 @@ pytest -q tests/test_claude_code_ecosystem.py tests/test_cli_init.py
 
 固定 function-call 探针成功，真实 TaskAgent 也能反复调用 `look`；失败点是模型始终没有调用必须的 `submit_atom`。所以准确结论是：
 
-> **Native Session → Bridge → Trajectory 已验证；Trajectory → Atom 失败；所有 Atom 下游阶段均未到达。**
+> **原始完整会话的 Native Session → Bridge → Trajectory 已验证；Trajectory → Atom 失败。**
 
-Qwen 对固定文本和 1,200 字符真实轨迹片段都能输出 4096 维 finite 向量，但这是旁路兼容性探针。自动流水线因为没有 Atom，从未进入 embedding pool。
+这个输入把被淘汰的开放式 pilot、有效的 TDD Case、Skill 初始化、权限中断和 `/exit` 本地命令放在同一条 2,220 行 Trajectory 中。它证明了长程 agent 契约失败，但不能区分“模型完全不会提交 Atom”和“实验 cohort 设计过杂”。
+
+#### 修复实验：只重放 Primary Case
+
+修复实验从保留的标准 Bridge 中机械截取 Case 2 的连续区间（原行 1181–2220），形成 **Case 2-only 派生 Trajectory**。它不是新的 Claude native session，也没有改写原始证据；用途是只改变 cohort 边界，重放同一生产 TaskAgent 与 `submit_atom` 工具。
+
+| 指标 | Case 2-only 实测值 |
+|---|---:|
+| 派生 Trajectory | 1,040 行 / 41,629 bytes / 7 个 user headers |
+| Claude 请求模型 | `MiniMax-M3` |
+| 原生响应模型 ID | `MiniMax-M3-MXFP8` |
+| TaskAgent 请求模型 | `MiniMax-M3` |
+| 运行时间 | 24.8 秒 |
+| Agent rounds / `look` | 7 / 6 |
+| `submit_atom` / 持久化 Atom | 3 / 3 |
+| Atom 起点 | 1、817、1028 |
+
+这次已经跨过“工具协议是否能提交”的执行门槛，但人工质量审计没有全绿：
+
+| 输出 | 实际内容 | 审计 |
+|---|---|---|
+| Atom 1 | Case 2 的 TDD red 阶段 | 应与 Atom 2 合并 |
+| Atom 2 | 用户阻止重复测试后的 green 实现阶段 | 同一目标的纠偏追问，被过切 |
+| Atom 3 | `/exit` 与 `Catch you later!` | 本地命令噪声，不应成为 Atom |
+
+Case 2 在任务层面预期是 1 个连续 Atom，实际得到 3 个：一个多余边界、一个噪声 Atom。因此结论更新为：
+
+> **Trajectory → Atom 的工具提交已在 Case 2-only 重放中通过；语义切分质量仍为部分通过。Candidate、SkillEdit、回注和 Canary 仍未验证。**
+
+#### 这是模型能力问题吗？
+
+**有关，但尚不能单因归责。** 同一 `MiniMax-M3` 请求模型在混合长会话中 0-submit，缩小到 Case 2 后能 3-submit，说明输入长度和意图混杂会影响工具遵循；Case 2 内仍出现过切与 `/exit` 噪声，又说明模型的语义边界判断不稳定。与此同时，TaskAgent 先只给“用户提问地图”、依赖模型主动 `look` 正文，prompt/agent 契约也是变量。
+
+`MiniMax-M3-MXFP8` 只是服务端响应里的部署变体 ID。当前没有未量化 MiniMax-M3 或其他模型的同轨迹 A/B，不能声称 MXFP8 量化导致错误。要归因模型能力，需要固定 Trajectory、prompt、工具和采样参数，重复比较多个模型的提交成功率与 Atom 边界准确率。
+
+Qwen 对固定文本和 1,200 字符真实轨迹片段都能输出 4096 维 finite 向量，但这是旁路兼容性探针。原始 daemon 因 0 Atom 未进入 embedding pool；修复重放有意停在 split 质量审计，没有继续伪造 cluster / SkillEdit 结果。
 
 ### 额外发现：首次启动可能吞入全机历史
 
@@ -336,14 +384,14 @@ Qwen 对固定文本和 1,200 字符真实轨迹片段都能输出 4096 维 fini
 | Coding task + Skill 调用 | 通过；Case 2 正确交付，真实 Skill tool use 可见 |
 | Native session → Bridge | 通过；1/1 目标 session，44 次工具调用保持一致 |
 | Daemon discover / retry | 通过；失败后自动重试语义可见 |
-| TaskAgent split | **失败；0 Atom** |
+| TaskAgent split | **部分通过**；原始完整会话 0 Atom；Case 2-only 重放提交 3 个，但有 1 个过切边界和 1 个噪声 Atom |
 | Embedding | 接口与旁路真实片段通过；自动阶段未到达 |
 | Candidate → SkillEdit → Canary | 未到达，不能声称验证 |
 | 效率 | 风险：Claude session 722 万 input tokens、0 cache read；split 再耗 62.8 万 tokens仍无 Atom |
 
 ## 建议的下一轮：换成 SWE-bench 的真实 oracle
 
-当前两个 case 都是直接围绕 XSkill 源码临时设计的。下一轮应固定 SWE-bench Lite 的 `base_commit`，只把原始 problem statement 给 agent，把 gold patch / test patch 留在 evaluator 侧。
+当前主 Case 仍是直接围绕 XSkill 源码临时设计的。下一轮应固定 SWE-bench Lite 的 `base_commit`，只把原始 problem statement 给 agent，把 gold patch / test patch 留在 evaluator 侧。
 
 优先顺序：
 
@@ -384,7 +432,7 @@ Qwen 对固定文本和 1,200 字符真实轨迹片段都能输出 4096 维 fini
 | 10–25 min | 注入与采集 | 文件协议相对进程 hook 的收益和盲区是什么？ |
 | 25–45 min | Atom / Candidate / Weightscore | 意图分段怎样评价？阈值 10 如何校准？ |
 | 45–60 min | Git 版本与 Canary | 如何避免反馈错绑到当前版本？ |
-| 60–75 min | 真实实验复盘 | 为什么 function calling 成功仍无法提交 Atom？ |
+| 60–75 min | 真实实验复盘 | 为什么长会话 0 提交，而 Case 2-only 又出现过切？ |
 | 75–90 min | SWE-bench 设计 | baseline / xskill 组怎样防止 gold 泄漏和历史污染？ |
 
 建议课前只读本 README；课中按讨论需要展开 `<details>`；课后再进入 reference 和源码。

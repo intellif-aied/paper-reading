@@ -1,10 +1,10 @@
 # Claude Code + MiniMax-M3：xskill 真实试用报告
 
-## 实测进度（2026-08-25）
+## 实测进度（2026-08-25—2026-08-27）
 
 本节只记录已经发生且可复核的结果；尚未运行的项目继续保留在后文“实验设计与证据口径”中。
 
-脱敏机器可读证据见 [`claude-minimax-trial-evidence.json`](./claude-minimax-trial-evidence.json)。其中只保存计数、测试结果和 SHA-256，不复制 prompt、API key、模型端点或会话正文。
+脱敏机器可读证据见 [`docs/claude-minimax-trial-evidence.json`](./claude-minimax-trial-evidence.json)。其中只保存计数、测试结果和 SHA-256，不复制 prompt、API key、模型端点或会话正文。
 
 ### 环境与安装结果
 
@@ -16,7 +16,8 @@
 | Python | `3.13.14` | `uv venv` 输出 |
 | 安装依赖 | 53 个 | `uv pip install -e` 输出；39 个包需准备，准备耗时 2m06s，安装耗时 1.25s |
 | Claude Code | `2.1.204` | 本机 `claude --version` |
-| Claude 模型配置 | `MiniMax-M3`；原生响应 ID 为 `MiniMax-M3-MXFP8` | 本机配置与本次 native JSONL；认证值未读取或记录 |
+| Claude 请求模型 | `MiniMax-M3` | 本机配置；认证值未读取或记录 |
+| 服务端观测模型 ID | `MiniMax-M3-MXFP8` | 本次 native JSONL 的 91/91 条 assistant 事件 |
 | Herdr 试验 pane | `w2:p3` / `minimax_xskill_trial` | agent 启动时为 `idle`、`interactive_ready=true`；试验后正常退出并回到 shell |
 | 试验工作区 | `/tmp/xskill-minimax-trial-20260825/workload` | 从当前 commit 创建的隔离 clone |
 
@@ -41,29 +42,35 @@
 
 ### Claude/MiniMax 真实任务
 
-用户明确授权数据出站与本机轨迹扫描后，在隔离 clone 中执行了两个场景；所有源码改动都留在 `/tmp/xskill-minimax-trial-20260825/workload`，没有进入本报告所在工作树。
+用户明确授权数据出站与本机轨迹扫描后，在隔离 clone 中先执行了一个开放式 pilot，再执行一个有明确 oracle 的 primary case；所有源码改动都留在 `/tmp/xskill-minimax-trial-20260825/workload`，没有进入本报告所在工作树。
 
 这两个场景都是直接基于 xskill 当前源码临时设计的实验任务，**不是 SWE-bench 实例，也不是仓库已有 issue**。它们用于验证真实 coding-agent 轨迹能否被采集和提取；其中只有第二个场景具有预先确定的验收条件，不能把两者当作客观的修复能力基准。
 
 | 场景 | 实际行为 | 可复核结果 |
 |---|---|---|
-| Debug/诊断 | 调用 `diagnosing-bugs`，运行 Claude ecosystem 与 CLI init 测试，然后开放式寻找未覆盖边界 | 指定测试 `30 passed in 17.78s`；没有建立新的失败复现。开放式 bug hunting 数分钟仍在低影响候选间反复推演，人工终止 |
-| TDD 开发 | 调用 `tdd`，为 registry list 增加 `--json`；先写 red tests，再改 CLI | Red：2 failed / 1 passed；Green：registry 相关 `41 passed in 13.38s`，原指定测试 warm run `30 passed in 3.91s` |
+| Pilot / Debug | 调用 `diagnosing-bugs`，运行 Claude ecosystem 与 CLI init 测试，然后开放式寻找未覆盖边界 | 指定测试 `30 passed in 17.78s`；没有建立新的失败复现。开放式 bug hunting 数分钟仍在低影响候选间反复推演，人工终止 |
+| Primary / TDD | 调用 `tdd`，为 registry list 增加 `--json`；先写 red tests，再改 CLI | Red：2 failed / 1 passed；Green：registry 相关 `41 passed in 13.38s`，原指定测试 warm run `30 passed in 3.91s` |
 | 独立复核 | 在 Claude 退出后由实验控制端运行全部四个相关测试文件 | `71 passed in 14.29s`，`git diff --check` 通过 |
 
-#### Case 1：开放式寻找 Claude Code ingestion 边界缺陷
+#### Pilot（淘汰）：开放式寻找 Claude Code ingestion 边界缺陷
 
 任务先要求运行 `tests/test_claude_code_ecosystem.py` 与 `tests/test_cli_init.py`。若基线通过，则检查 `src/xskill/ecosystems/claude_code.py`、共享 ingestion 逻辑及 trajectory 调用方，找到一个真实边界缺陷；必须先得到失败回归测试，再做最小修复。
 
 基线得到 `30 passed in 17.78s`。模型随后考察了空 user content、非字典 tool input、未闭合 tool call、tool result 中 Markdown fence 等候选，但没有证明任何一个候选能真实复现，也没有产生 failing test 或源码修改，最终由实验控制端终止。因此这个 case 实际测到的是开放式诊断能否收敛；由于没有已知 issue、失败测试或标准 oracle，它不是一次成功的 bug repair，也是本轮实验中设计较弱的 case。
 
-#### Case 2：为 `xskill registry list` 增加 `--json`
+#### Primary Case（Case 2）：为 `xskill registry list` 增加 `--json`
 
 任务要求保留原文本输出，并增加顶层 JSON 数组输出；每个 watch directory 固定包含 `id`、`label`、`ecosystem`、`path`、`trajectories`、`indexed` 六个字段，空 registry 输出 `[]`，且只使用 Python 标准库。模型先新增非空 JSON、空 JSON、文本兼容性三个测试，red 结果为 `2 failed / 1 passed`；随后在 `src/xskill/cli.py` 增加参数与 `json.dumps()` 分支，green 结果为 registry 测试 `41 passed`，独立复核合计 `71 passed`。
 
 这个 case 有明确输入、输出、兼容性要求和测试 oracle，能具体观察 TDD 顺序、修改范围以及轨迹中的 Read/Bash/Edit 行为。不过首条 prompt 因格式问题把命令名丢成了“add machine-readable output for .”；模型根据上下文推断为 registry list，实验控制端随后明确补充了命令和六个字段。因此它是一次成功但带人工澄清的功能实现，不是完全无干预运行。
 
 TDD 产物为 2 个文件、119 行新增：`src/xskill/cli.py` 17 行，`tests/test_team_cli_registry_list_client.py` 102 行，未 commit。实现功能正确，但测试代码约为实现代码的 6 倍，且模型在已有 red 结果后仍尝试重复运行单测，需要人工拒绝并重新收束任务。
+
+因此，对本次“采集 → 提取”生命周期烟测，直接使用第二个实验就够：它具有连续的 red → green → 独立复核证据。Pilot 没有失败复现和修复产物，不应进入有效学习 cohort。2026-08-27 的修复实验只重放 Primary Case；但单个临时设计 case 仍不能替代 SWE-bench 这类固定基准。
+
+两个任务之所以进入同一条 Trajectory，不是模型或 xskill 配置写错，而是实验控制端在同一个 Claude 顶层 session 中连续执行了 Pilot 和 Primary Case。源码中的默认采集范围是 `<home>/.claude/projects/*/*.jsonl`；每个 JSONL 的 `session_id` 单独生成一个 `traj_cc_<project>_<sid>`，因此 xskill 会发现 HOME 下所有新 session，**但不会把不同 session 互相拼接**。同一 session 内有多少任务，Bridge 都会原样保留，之后才由 TaskAgent 按“用户意图切换”拆成 Atom。
+
+所以这里有两个不同结论：作为生产形态压力测试，多意图长 session 是合法输入，TaskAgent 本应处理；作为 Case 2 的干净可归因实验，复用 session 造成了混杂，应该一开始就新开 Claude session，或像修复实验一样只给 TaskAgent 受控的 Case 2 Trajectory。隔离 HOME 只能限制“扫描哪些 session”，不能自动拆开一个 session 内的两个任务。
 
 为下一轮更客观的实验，已另行核验三个带固定 `base_commit`、真实 issue、FAIL_TO_PASS 与 PASS_TO_PASS oracle 的 [SWE-bench Lite 候选](./swe-bench-case-candidates.md)。这些候选尚未运行，不能计入本报告的实测结果。
 
@@ -86,7 +93,8 @@ source:     ~/.claude/projects/-tmp-xskill-minimax-trial-20260825-workload/<sess
 | 工具调用 | 44 |
 | 工具分布 | Bash 25、Read 14、Edit 3、Skill 2 |
 | 真实 Skill 调用 | `diagnosing-bugs` 1、`tdd` 1 |
-| 模型 | `MiniMax-M3-MXFP8`，91/91 assistant 消息一致 |
+| Claude 请求模型 | `MiniMax-M3` |
+| 服务端观测模型 ID | `MiniMax-M3-MXFP8`，91/91 assistant 消息一致 |
 | input / output tokens | 7,223,652 / 22,137 |
 | cache creation / cache read tokens | 0 / 0 |
 | permission-mode 事件 | 12 |
@@ -153,9 +161,9 @@ Native Session
 | **User Staging** | 隔离保存专家本地修改的 client 专属分支，不能直写 Main | 普通 Canary Staging |
 | **Native Skill / SkillHub Skill** | 前者进入 Git/Candidate/Canary 演进；后者是可搜索三方包，不自动拥有完整演进链 | 同一种 Skill 来源 |
 
-本次试验的失败位置因此可以精确表述为：**Bridge 和 Trajectory 已成功，TaskAgent 没有提交任何 Atom；所以 Candidate、Weightscore、Adoption、Baby/Main/Staging 和 Canary 都还不存在。** “Qwen embedding 接口可用”也不能改变这个事实，因为自动 embedding 的输入正是已提交的 Atom。
+原始完整会话的失败位置可以精确表述为：**Bridge 和 Trajectory 已成功，但 TaskAgent 没有提交任何 Atom；所以 Candidate、Weightscore、Adoption、Baby/Main/Staging 和 Canary 都还不存在。** 后续 Case 2-only 重放跨过了工具提交关口，但暴露了过切和噪声 Atom，详见下文。Qwen embedding 接口可用仍只是旁路证据，因为本轮自动流水线没有运行到 embedding。
 
-### 真实自动蒸馏重跑与失败定位
+### 原始完整会话：真实自动蒸馏重跑与失败定位
 
 初始阶段完整 standalone daemon 没有成功常驻。第二次 `xskill --debug serve --port 8877` 能启动 FastAPI，并记录模板默认的 `deepseek-v4-flash` 和 `text-embedding-v4`，但随后进入 embedding 维度探测并退出。
 
@@ -210,13 +218,42 @@ Native Session
 | total tokens | 628,205 |
 | xskill 默认价格表估算 | USD 0.643573；`estimated=true`，不是供应商账单 |
 
-这不是“端点完全不可用”：固定 function-call 探针能正确返回工具调用，真实 split 也能持续调用 `look`。兼容性失败发生在更严格的 agent 契约上——MiniMax 能分析和读取，却没有调用必须的 `submit_atom`；trace 还反复出现空内容被协议层净化后继续 `look` 的行为。因此当前组合不适合直接驱动 xskill TaskAgent，至少需要模型侧 tool-use 行为改进、显式轮次/工具预算，或针对该模型验证过的 prompt/adapter。
+这不是“端点完全不可用”：固定 function-call 探针能正确返回工具调用，真实 split 也能持续调用 `look`。在这条混合了 Pilot、Primary Case、初始化、权限中断与退出命令的完整 Trajectory 上，MiniMax 没有调用必须的 `submit_atom`；trace 还反复出现空内容被协议层净化后继续 `look` 的行为。该结果说明完整长会话不适合作为单一学习 cohort，但还不足以断言模型在边界清楚时完全不会提交 Atom。
 
 Qwen embedding 则通过两级旁路探测：固定文本为 4096 维、177.5ms；目标轨迹中的真实 TDD 片段为 1,200 字符、4096 维、全部 finite、2,692.4ms。后者证明真实内容可被该 endpoint 编码，但必须标记为**旁路兼容性测试**：自动流水线因没有 Atom 而从未进入 embed pool。
 
 隔离 registry 的最终计数为 `watch_dirs=1 / trajectories=1 / llm_usage=39 / atom_adoption=0 / canary_decision=0`。所以本报告能证明真实 daemon 的启动、bridge、discover 和失败重试语义，不能声称已经验证自动 cluster、SkillEdit、生成 Skill 回装或 canary。
 
 安全收尾时已删除隔离 HOME 中复制的模型配置（其中曾含凭据）；主 `~/.xskill/config.yaml` 未改，隔离 trajectory、registry 和 trace 仍保留用于复核。
+
+### 修复实验：Case 2-only 受控重放（2026-08-27）
+
+为排除 Pilot 和会话尾部噪声对 split 的干扰，修复实验从保留的标准 Bridge 中机械截取 Primary Case 的连续区间（原行 `1181–2220`），形成 Case 2-only 派生 Trajectory。它不是新的 Claude 原生会话，也没有改写原始证据；唯一改变的是 TaskAgent 所见的 cohort 边界。
+
+模型名在这里必须分开记录：Claude 发起 coding 请求时配置的是 `MiniMax-M3`，原生 JSONL/Bridge 响应元数据报告的是部署变体 `MiniMax-M3-MXFP8`；TaskAgent 蒸馏请求同样配置为 `MiniMax-M3`。因此不能把 `MiniMax-M3-MXFP8` 写成用户配置的模型名。
+
+| 指标 | Case 2-only 实测值 |
+|---|---:|
+| 派生 Trajectory | 1,040 行 / 41,629 bytes / 7 个 user header |
+| SHA-256 | `90e2f281eaff037dd716ae0351d760617e7023ef2dbc4a2d920dbe102193e613` |
+| Claude 请求模型 | `MiniMax-M3` |
+| 原生响应模型 ID | `MiniMax-M3-MXFP8` |
+| TaskAgent 请求模型 | `MiniMax-M3` |
+| 运行耗时 | 24.759s |
+| agent trace | 7 rounds / 6 次 `look` / 3 次 `submit_atom` |
+| 落盘 Atom | 3 个，起始行 `1 / 817 / 1028` |
+
+工具协议已从原始完整会话的 0-submit 变为成功提交；但逐个审计发现语义切分并未完全正确：
+
+| 输出 | 实际内容 | 质量判断 |
+|---|---|---|
+| Atom 1 | Case 2 的 TDD red 阶段 | 应与 Atom 2 合并 |
+| Atom 2 | 同一 Case 2 的 green 阶段，边界来自用户制止重复测试 | 多余边界，属于过切 |
+| Atom 3 | `/exit` 与 `Catch you later!` | 会话控制噪声，不应成为 Atom |
+
+任务级预期是 1 个连续 Atom，实际得到 3 个，其中包含 1 个多余边界和 1 个噪声 Atom。因此修复结论是：**Trajectory → Atom 的工具调用/持久化已通过，语义切分质量仅部分通过。** 本次受控重放有意停在 split 质量审计，没有继续运行 embed、cluster、Candidate、SkillEdit、回注或 Canary；这些阶段仍然是“未验证”，而不是“失败”。这次修复的是实验 cohort，不是 xskill 源码。
+
+这组结果与模型能力有关，但当前证据不能把责任完全归给模型：同一 `MiniMax-M3` 请求模型在缩小 cohort 后从 0-submit 变成 3-submit，说明输入长度与意图混杂显著影响工具遵循；它又把同一目标的纠偏切开，并把 `/exit` 当 Atom，说明语义边界判断仍不够稳定。另一方面，TaskAgent 只先提供“用户提问地图”、需要模型主动 `look` 才能读取正文，这种 prompt/agent 契约同样是变量。`MiniMax-M3-MXFP8` 只是服务端观测到的部署 ID；没有未量化 MiniMax-M3 或另一模型的同轨迹 A/B，不能据此断言量化导致了错误。要回答“是不是模型能力问题”，最小有效补实验是把同一 Case 2 Trajectory、同一 prompt 和采样参数分别重复跑多个模型，再比较 submit 成功率与 Atom 边界准确率。
 
 ### 试用结论
 
@@ -227,9 +264,9 @@ Qwen embedding 则通过两级旁路探测：固定文本为 4096 维、177.5ms�
 | 真实 Skill tool use | 通过；`diagnosing-bugs`、`tdd` 各 1 次 |
 | 原生会话采集与 adapter | 通过；1/1 session 最终 bridge，模型/44 次工具调用保持一致 |
 | daemon bridge/discover | 通过；隔离 HOME 中只注册并发现目标 1 条 trajectory |
-| 自动 Atom split | **失败**；首次 0-submit 后自动重试，第二次 29 rounds/36 `look` 仍无 `submit_atom` |
-| Qwen embedding | 接口与真实片段旁路测试通过；自动 embed 未到达 |
-| Candidate→Skill→canary | 未到达；Atom 为 0，后续概念均无实例 |
+| 自动 Atom split | **部分通过**；原始完整会话 0 Atom，Case 2-only 重放提交 3 个，但有 1 个过切边界和 1 个噪声 Atom |
+| Qwen embedding | 接口与真实片段旁路测试通过；Case 2-only 重放停在 split 审计，自动 embed 仍未到达 |
+| Candidate→Skill→canary | 未到达；修复重放没有继续运行下游流水线 |
 | 数据范围控制 | 有风险；真实 HOME 首启自动桥接全机历史，必须先隔离或预算化 backfill |
 | 使用效率 | 风险明显；Claude 会话 722 万 input tokens、零 cache read；xskill split 又消耗 62.8 万 tokens 仍无 Atom |
 
