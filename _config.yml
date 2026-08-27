@@ -4,3 +4,5 @@ theme: minima
 lang: zh-CN
 markdown: kramdown
 permalink: pretty
+kramdown:
+  parse_block_html: true
