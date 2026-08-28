@@ -3,71 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>三 Agent 流水线把证据逐级收窄</title>
+  <title>Session 如何生成 Skill</title>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
   <style>
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.lane-title{font:600 12px "Geist Mono",monospace;fill:#4f5d75;letter-spacing:1px}.label{font-size:16px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.tiny{font-size:12px;fill:#4f5d75}.lane{fill:#fff;stroke:#c8cdd7;stroke-width:2}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#pipeline-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#pipeline-arrow-accent)}.flow-link{fill:none;stroke:#2e5aa8;stroke-width:2;marker-end:url(#pipeline-arrow-link)}.callout{fill:#fff8e8;stroke:#d6a63c;stroke-width:2}.callout-text{font-size:12px;fill:#604a18}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono","Noto Sans Mono CJK SC",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.zone-title{font:600 14px "Geist Mono","Noto Sans Mono CJK SC",monospace;letter-spacing:1px;fill:#4f5d75}.label{font-size:16px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.zone{fill:#f1f4f8;stroke:#c8cdd7;stroke-width:2}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.agent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#distill-arrow)}.primary{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#distill-arrow-accent)}.edge{font:500 12px "Geist Mono","Noto Sans Mono CJK SC",monospace;fill:#4f5d75}.step{font:600 12px "Geist Mono","Noto Sans Mono CJK SC",monospace;fill:#eb6c36}.note{fill:#fff8e8;stroke:#d6a63c;stroke-width:2}.note-copy{font-size:13px;fill:#604a18}
   </style>
 </head>
 <body><div class="frame">
-<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pipeline-title pipeline-desc">
-  <title id="pipeline-title">三 Agent 流水线把一段会话逐级收窄</title>
-  <desc id="pipeline-desc">TaskAgent 切分用户意图并独立生成 UX score；TaskClusterAgent 另行判断 Atom 对 Skill 的 weightscore；SkillEditAgent 在候选权重达到十后改写 Skill 目录并提交 Git 版本。</desc>
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="distill-title distill-desc">
+  <title id="distill-title">Session 如何生成 Skill</title>
+  <desc id="distill-desc">Team 模式下三个 Agent 都运行在 XSkill 服务端。TaskAgent 把会话切成单一任务并给出任务体验分；TaskClusterAgent 决定任务应支持哪个 Skill，并给出复用权重；候选权重累计到默认门槛十后，SkillEditAgent 改写服务端 Skill Git 仓库。</desc>
   <defs>
-    <marker id="pipeline-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
-    <marker id="pipeline-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
-    <marker id="pipeline-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+    <marker id="distill-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="distill-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
   </defs>
   <rect width="1280" height="720" fill="#f5f5f5"/>
-  <text class="eyebrow" x="48" y="44">PROCESS · THREE AGENTS</text>
-  <text class="title" x="48" y="88">三 Agent 流水线把证据逐级收窄</text>
+  <text class="eyebrow" x="48" y="44">QUESTION 2 · SERVER PIPELINE</text>
+  <text class="title" x="48" y="88">三次收窄：切任务、找归属、改版本</text>
 
-  <rect class="lane" x="48" y="120" width="1184" height="144" rx="16"/>
-  <rect class="lane" x="48" y="280" width="1184" height="144" rx="16"/>
-  <rect class="lane" x="48" y="440" width="1184" height="144" rx="16"/>
+  <rect class="zone" x="48" y="124" width="1184" height="464" rx="16"/>
+  <text class="zone-title" x="72" y="154">XSKILL 服务端 · 三个 Agent 都在这里运行</text>
 
-  <!-- connectors first -->
-  <path class="flow" d="M328 192 H384"/>
-  <path class="flow-accent" d="M664 192 H720"/>
-  <path class="flow-accent" d="M852 232 V292 H204 V312"/>
-  <path class="flow" d="M328 352 H384"/>
-  <path class="flow" d="M664 352 H720"/>
-  <path class="flow" d="M852 392 V452 H204 V472"/>
-  <path class="flow" d="M328 512 H384"/>
-  <path class="flow-link" d="M664 512 H720"/>
+  <!-- Connectors first -->
+  <path class="flow" d="M208 332 H248"/>
+  <path class="primary" d="M416 332 H456"/>
+  <path class="flow" d="M616 332 H656"/>
+  <path class="primary" d="M824 332 H864"/>
+  <path class="flow" d="M1024 332 H1064"/>
 
-  <text class="lane-title" x="68" y="144">TASKAGENT · SEMANTIC SEGMENTATION</text>
-  <rect class="node" x="160" y="156" width="168" height="76" rx="12"/>
-  <text class="label" x="244" y="188" text-anchor="middle">Trajectory</text><text class="sub" x="244" y="212" text-anchor="middle">完整连续会话</text>
-  <rect class="node" x="396" y="148" width="256" height="92" rx="12"/>
-  <text class="label" x="524" y="180" text-anchor="middle">定位任务切换</text><text class="sub" x="524" y="204" text-anchor="middle">先看用户提问索引</text><text class="sub" x="524" y="224" text-anchor="middle">需要时再读局部原文</text>
-  <rect class="accent" x="732" y="148" width="240" height="92" rx="12"/>
-  <text class="label" x="852" y="180" text-anchor="middle">保存任务片段</text><text class="sub mono" x="852" y="204" text-anchor="middle">submit_atom(start, end, ux_score)</text><text class="sub" x="852" y="224" text-anchor="middle">Atom、used_skills 与 UX 分</text>
+  <rect class="store" x="72" y="260" width="136" height="144" rx="12"/>
+  <text class="label" x="140" y="296" text-anchor="middle">统一会话</text>
+  <text class="sub" x="140" y="324" text-anchor="middle">一段长 Session</text>
+  <text class="sub" x="140" y="348" text-anchor="middle">含多个用户意图</text>
 
-  <text class="lane-title" x="68" y="304">TASKCLUSTERAGENT · ROUTING</text>
-  <rect class="node" x="160" y="316" width="168" height="76" rx="12"/>
-  <text class="label" x="244" y="348" text-anchor="middle">Atom</text><text class="sub" x="244" y="372" text-anchor="middle">一个连续用户意图</text>
-  <rect class="node" x="396" y="308" width="256" height="92" rx="12"/>
-  <text class="label" x="524" y="340" text-anchor="middle">查找已有 Skill</text><text class="sub" x="524" y="364" text-anchor="middle">对比整个 catalog</text><text class="sub" x="524" y="384" text-anchor="middle">归入已有 / 创建新 Skill</text>
-  <rect class="store" x="732" y="308" width="240" height="92" rx="12"/>
-  <text class="label" x="852" y="340" text-anchor="middle">候选证据账本</text><text class="sub mono" x="852" y="364" text-anchor="middle">atom_id → weightscore</text><text class="sub" x="852" y="384" text-anchor="middle">证据按 Skill 累加</text>
+  <rect class="agent" x="248" y="244" width="168" height="176" rx="12"/>
+  <text class="step" x="272" y="276">01</text>
+  <text class="label" x="332" y="308" text-anchor="middle">TaskAgent</text>
+  <text class="sub" x="332" y="340" text-anchor="middle">找到任务切换边界</text>
+  <text class="sub" x="332" y="364" text-anchor="middle">保留对应原文范围</text>
+  <text class="sub" x="332" y="388" text-anchor="middle">给任务结果 1–10 分</text>
 
-  <text class="lane-title" x="68" y="464">SKILLEDITAGENT · VERSIONED EDIT</text>
-  <rect class="node" x="160" y="476" width="168" height="76" rx="12"/>
-  <text class="label mono" x="244" y="508" text-anchor="middle">Σ weight ≥ 10</text><text class="sub" x="244" y="532" text-anchor="middle">触发条件</text>
-  <rect class="node" x="396" y="468" width="256" height="92" rx="12"/>
-  <text class="label" x="524" y="500" text-anchor="middle">改写 Skill 目录</text><text class="sub" x="524" y="524" text-anchor="middle">综合候选与原始任务证据</text><text class="sub" x="524" y="544" text-anchor="middle">工具提交 Git checkpoint</text>
-  <rect class="store" x="732" y="468" width="240" height="92" rx="12"/>
-  <text class="label" x="852" y="500" text-anchor="middle">Git branch transition</text><text class="sub" x="852" y="524" text-anchor="middle">Baby → Main</text><text class="sub" x="852" y="544" text-anchor="middle">Main → Staging</text>
+  <rect class="store" x="456" y="260" width="160" height="144" rx="12"/>
+  <text class="label" x="536" y="296" text-anchor="middle">任务片段 Atom</text>
+  <text class="sub" x="536" y="324" text-anchor="middle">一个连续用户意图</text>
+  <text class="sub mono" x="536" y="348" text-anchor="middle">lines + UX score</text>
+  <text class="sub" x="536" y="372" text-anchor="middle">仍能回看原会话</text>
 
-  <rect class="callout" x="996" y="148" width="212" height="412" rx="12"/>
-  <text class="label" x="1020" y="184">两次独立判断</text>
-  <text class="callout-text" x="1020" y="220">UX score · TaskAgent</text><text class="sub" x="1020" y="244">评价任务结果</text><text class="sub" x="1020" y="264">后续归因到版本账本</text>
-  <text class="callout-text" x="1020" y="300">Weightscore · TCA</text><text class="sub" x="1020" y="324">评价复用相关性</text><text class="sub" x="1020" y="344">累计至 10 触发编辑</text>
-  <line x1="1020" y1="364" x2="1184" y2="364" stroke="#d6a63c" stroke-width="2"/>
-  <text class="callout-text" x="1020" y="396">取值都为 1–10</text>
-  <text class="sub" x="1020" y="424">生产者、含义和去向</text><text class="sub" x="1020" y="444">各自独立；源码没有</text><text class="sub" x="1020" y="464">复用同一个分数。</text>
-  <text class="tiny mono" x="48" y="632">source · agents/task_agent.py · pipeline/atom.py · agents/task_cluster_agent.py · skill/candidates.py · agents/skill_edit_agent.py</text>
+  <rect class="agent" x="656" y="244" width="168" height="176" rx="12"/>
+  <text class="step" x="680" y="276">02</text>
+  <text class="label" x="740" y="308" text-anchor="middle">TaskClusterAgent</text>
+  <text class="sub" x="740" y="340" text-anchor="middle">对比团队 Skill 目录</text>
+  <text class="sub" x="740" y="364" text-anchor="middle">归入已有或新建 Skill</text>
+  <text class="sub" x="740" y="388" text-anchor="middle">给复用价值 1–10 分</text>
+
+  <rect class="store" x="864" y="260" width="160" height="144" rx="12"/>
+  <text class="label" x="944" y="296" text-anchor="middle">候选证据 Candidate</text>
+  <text class="sub" x="944" y="324" text-anchor="middle">按 Skill 累计</text>
+  <text class="sub mono" x="944" y="348" text-anchor="middle">Σ weightscore</text>
+  <text class="sub" x="944" y="372" text-anchor="middle">默认达到 10 才编辑</text>
+
+  <rect class="agent" x="1064" y="244" width="144" height="176" rx="12"/>
+  <text class="step" x="1088" y="276">03</text>
+  <text class="label" x="1136" y="308" text-anchor="middle">SkillEditAgent</text>
+  <text class="sub" x="1136" y="340" text-anchor="middle">读取候选与原文</text>
+  <text class="sub" x="1136" y="364" text-anchor="middle">改写 Skill 目录</text>
+  <text class="sub" x="1136" y="388" text-anchor="middle">提交服务端 Git</text>
+
+  <text class="edge" x="228" y="316" text-anchor="middle">切分</text>
+  <text class="edge" x="436" y="316" text-anchor="middle">Atom</text>
+  <text class="edge" x="636" y="316" text-anchor="middle">归类</text>
+  <text class="edge" x="844" y="316" text-anchor="middle">累计</text>
+  <text class="edge" x="1044" y="316" text-anchor="middle">触发</text>
+
+  <rect class="note" x="248" y="472" width="776" height="72" rx="12"/>
+  <text class="note-copy" x="272" y="502">默认 10 分门槛是 SkillEditAgent 的触发配置；每条 Candidate 的 weightscore 由 TaskClusterAgent 产生。</text>
+  <text class="note-copy" x="272" y="526">EditAgent 修改的是服务端 Skill 仓库，不是用户机器上的安装目录。</text>
 </svg>
 </div></body>
 </html>

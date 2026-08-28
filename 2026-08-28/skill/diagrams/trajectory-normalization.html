@@ -3,75 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>当前源码如何生成统一会话副本</title>
+  <title>Session 如何采集</title>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
   <style>
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.label{font-size:16px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.tiny{font-size:12px;fill:#4f5d75}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#trajectory-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#trajectory-arrow-accent)}.flow-link{fill:none;stroke:#2e5aa8;stroke-width:2;marker-end:url(#trajectory-arrow-link)}.bus{fill:none;stroke:#4f5d75;stroke-width:2}.boundary{fill:#fff5ef;stroke:#eb6c36;stroke-width:2;stroke-dasharray:8 8}.boundary-label{font:500 12px "Geist Mono",monospace;fill:#a33f1b}.fact{fill:#fff;stroke:#c8cdd7;stroke-width:2}.fact-number{font:600 24px "Geist Mono",monospace;fill:#2d3142}.fact-copy{font-size:12px;fill:#4f5d75}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono","Noto Sans Mono CJK SC",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.zone-title{font:600 14px "Geist Mono","Noto Sans Mono CJK SC",monospace;letter-spacing:1px;fill:#4f5d75}.label{font-size:16px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.zone{fill:#fff;stroke:#c8cdd7;stroke-width:2}.server{fill:#f1f4f8}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#capture-arrow)}.primary{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#capture-arrow-accent)}.upload{fill:none;stroke:#2e5aa8;stroke-width:2;stroke-dasharray:8 8;marker-end:url(#capture-arrow-link)}.edge{font:500 12px "Geist Mono","Noto Sans Mono CJK SC",monospace;fill:#4f5d75}.note{fill:#fff8e8;stroke:#d6a63c;stroke-width:2}.note-title{font:600 13px "Geist Mono","Noto Sans Mono CJK SC",monospace;fill:#604a18}.note-copy{font-size:13px;fill:#604a18}
   </style>
 </head>
 <body><div class="frame">
-<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="trajectory-title trajectory-desc">
-  <title id="trajectory-title">当前源码如何生成统一会话副本</title>
-  <desc id="trajectory-desc">当前源码的九个本地适配器解析、筛选并截断原生会话，生成 Markdown Bridge 与元数据；进入可选的 Team 路径后，客户端再做凭证脱敏和稳定性检查，只上传 Markdown 与少量元数据。论文列出的 Hermes 不在当前源码适配器中。</desc>
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="capture-title capture-desc">
+  <title id="capture-title">Session 如何采集</title>
+  <desc id="capture-desc">用户机器上的 XSkill 客户端等待原生会话日志停止写入，再通过对应适配器转换成统一的 Markdown 会话文本。Team 模式下，客户端脱敏后上传到服务端会话库。Bridge 是这种统一会话文本的内部名称。</desc>
   <defs>
-    <marker id="trajectory-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
-    <marker id="trajectory-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
-    <marker id="trajectory-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+    <marker id="capture-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="capture-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="capture-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
   </defs>
   <rect width="1280" height="720" fill="#f5f5f5"/>
-  <text class="eyebrow" x="48" y="44">DATA FLOW · CURRENT SOURCE</text>
-  <text class="title" x="48" y="88">当前源码：原生日志先成为本地 Bridge</text>
+  <text class="eyebrow" x="48" y="44">QUESTION 1 · SESSION CAPTURE</text>
+  <text class="title" x="48" y="88">先保留事实，再统一格式</text>
 
-  <rect class="boundary" x="776" y="216" width="456" height="248" rx="8"/>
+  <rect class="zone" x="48" y="124" width="824" height="464" rx="16"/>
+  <rect class="zone server" x="912" y="124" width="320" height="464" rx="16"/>
 
-  <!-- connectors first -->
-  <path class="bus" d="M260 164 V500"/>
-  <path class="bus" d="M224 164 H260"/><path class="bus" d="M224 248 H260"/><path class="bus" d="M224 332 H260"/><path class="bus" d="M224 416 H260"/><path class="bus" d="M224 500 H260"/>
-  <path class="flow" d="M260 332 H320"/>
-  <path class="flow-accent" d="M504 332 H544"/>
-  <path class="flow-link" d="M744 332 H800"/>
-  <path class="flow-link" d="M984 332 H1016"/>
+  <!-- Connectors first -->
+  <path class="flow" d="M248 320 H296"/>
+  <path class="primary" d="M496 320 H544"/>
+  <path class="flow" d="M744 320 H792"/>
+  <path class="upload" d="M872 320 H952"/>
 
-  <rect class="node" x="48" y="132" width="176" height="64" rx="8"/><text class="label" x="136" y="160" text-anchor="middle">Claude Code</text><text class="sub mono" x="136" y="180" text-anchor="middle">JSONL</text>
-  <rect class="node" x="48" y="216" width="176" height="64" rx="8"/><text class="label" x="136" y="244" text-anchor="middle">Codex</text><text class="sub mono" x="136" y="264" text-anchor="middle">JSONL</text>
-  <rect class="node" x="48" y="300" width="176" height="64" rx="8"/><text class="label" x="136" y="328" text-anchor="middle">OpenClaw</text><text class="sub mono" x="136" y="348" text-anchor="middle">JSONL</text>
-  <rect class="node" x="48" y="384" width="176" height="64" rx="8"/><text class="label" x="136" y="412" text-anchor="middle">OpenCode</text><text class="sub mono" x="136" y="432" text-anchor="middle">SQLite</text>
-  <rect class="node" x="48" y="468" width="176" height="64" rx="8"/><text class="label" x="136" y="496" text-anchor="middle">其他 5 个适配器</text><text class="sub mono" x="136" y="516" text-anchor="middle">current source</text>
+  <text class="zone-title" x="72" y="154">用户机器 · LOCAL</text>
+  <text class="sub" x="72" y="178">读取 Agent 已经写出的文件，不改 Agent 进程</text>
+  <rect class="store" x="88" y="256" width="160" height="128" rx="12"/>
+  <text class="label" x="168" y="288" text-anchor="middle">原生会话日志</text>
+  <text class="sub" x="168" y="316" text-anchor="middle">Claude · Codex · …</text>
+  <text class="sub mono" x="168" y="340" text-anchor="middle">JSONL / SQLite</text>
+  <text class="sub" x="168" y="364" text-anchor="middle">原始消息与工具调用</text>
+  <rect class="node" x="296" y="256" width="200" height="128" rx="12"/>
+  <text class="label" x="396" y="288" text-anchor="middle">等待写入结束</text>
+  <text class="sub" x="396" y="316" text-anchor="middle">日志静默一段时间后再读</text>
+  <text class="sub" x="396" y="340" text-anchor="middle">对应适配器解析格式</text>
+  <text class="sub" x="396" y="364" text-anchor="middle">筛选并截断超长内容</text>
+  <rect class="accent" x="544" y="256" width="200" height="128" rx="12"/>
+  <text class="label" x="644" y="288" text-anchor="middle">统一会话文本</text>
+  <text class="sub mono" x="644" y="316" text-anchor="middle">Bridge · traj_*.md</text>
+  <text class="sub" x="644" y="340" text-anchor="middle">统一 user / assistant / tool</text>
+  <text class="sub" x="644" y="364" text-anchor="middle">后续只处理这一种格式</text>
+  <rect class="node" x="792" y="256" width="80" height="128" rx="12"/>
+  <text class="label" x="832" y="300" text-anchor="middle">脱敏</text>
+  <text class="sub" x="832" y="328" text-anchor="middle">凭证</text>
+  <text class="sub" x="832" y="348" text-anchor="middle">替换</text>
 
-  <rect class="node" x="320" y="268" width="184" height="128" rx="8"/>
-  <text class="label" x="412" y="304" text-anchor="middle">静默门槛 + adapter</text>
-  <text class="sub" x="412" y="332" text-anchor="middle">等待源文件停止写入</text>
-  <text class="sub" x="412" y="352" text-anchor="middle">解析、筛选并截断内容</text>
-  <text class="sub mono" x="412" y="376" text-anchor="middle">quiet gate · adapter</text>
+  <text class="zone-title" x="936" y="154">XSkill 服务端 · SERVER</text>
+  <text class="sub" x="936" y="178">Team 模式才上传</text>
+  <rect class="store" x="952" y="256" width="240" height="128" rx="12"/>
+  <text class="label" x="1072" y="288" text-anchor="middle">团队会话库</text>
+  <text class="sub" x="1072" y="316" text-anchor="middle">统一文本</text>
+  <text class="sub" x="1072" y="340" text-anchor="middle">模型名 · 运行时 · 内容哈希</text>
+  <text class="sub" x="1072" y="364" text-anchor="middle">等待服务端流水线处理</text>
 
-  <rect class="accent" x="544" y="260" width="200" height="144" rx="8"/>
-  <text class="label" x="644" y="296" text-anchor="middle">本地 Bridge</text>
-  <text class="sub mono" x="644" y="324" text-anchor="middle">traj_*.md</text>
-  <text class="sub" x="644" y="348" text-anchor="middle">统一角色与工具段落</text>
-  <text class="sub mono" x="644" y="372" text-anchor="middle">optional metadata JSON</text>
+  <text class="edge" x="272" y="304" text-anchor="middle">READ</text>
+  <text class="edge" x="520" y="304" text-anchor="middle">NORMALIZE</text>
+  <text class="edge" x="912" y="304" text-anchor="middle">UPLOAD</text>
 
-  <text class="boundary-label" x="800" y="244">OPTIONAL TEAM UPLOAD PATH</text>
-  <rect class="node" x="800" y="276" width="184" height="112" rx="8"/>
-  <text class="label" x="892" y="308" text-anchor="middle">凭证脱敏 + 稳定检查</text>
-  <text class="sub" x="892" y="336" text-anchor="middle">内容哈希稳定后上传</text>
-  <text class="sub" x="892" y="360" text-anchor="middle">正则只能降低泄露风险</text>
-
-  <rect class="store" x="1016" y="260" width="192" height="144" rx="8"/>
-  <text class="label" x="1112" y="292" text-anchor="middle">Server 收到</text>
-  <text class="sub mono" x="1040" y="324">markdown</text><text class="sub" x="1132" y="324">会话文本</text>
-  <text class="sub mono" x="1040" y="348">hash</text><text class="sub" x="1132" y="348">内容摘要</text>
-  <text class="sub mono" x="1040" y="372">model</text><text class="sub" x="1132" y="372">模型名</text>
-  <text class="sub mono" x="1040" y="396">harness</text><text class="sub" x="1132" y="396">运行时</text>
-
-  <rect class="fact" x="320" y="520" width="424" height="108" rx="8"/>
-  <text class="fact-number" x="344" y="556">Paper v4 · 5</text>
-  <text class="fact-copy" x="344" y="584">论文列 Claude、Codex、OpenClaw、OpenCode、Hermes。</text>
-  <text class="fact-copy" x="344" y="604">这是论文范围，不代表当前适配器清单。</text>
-  <rect class="fact" x="776" y="520" width="456" height="108" rx="8"/>
-  <text class="fact-number" x="800" y="556">Current source · 9</text>
-  <text class="fact-copy" x="800" y="584">本地源码可探测九个生态；其中没有 Hermes。</text>
-  <text class="fact-copy" x="800" y="604">Team collector 的覆盖范围还要单独检查。</text>
-  <text class="tiny mono" x="48" y="680">source · ecosystems adapters · ecosystems/_shared.py · team/client/collector.py · team/shared/protocol.py · paper §3.1</text>
+  <rect class="note" x="296" y="432" width="448" height="88" rx="12"/>
+  <text class="note-title" x="320" y="464">BRIDGE 是什么？</text>
+  <text class="note-copy" x="320" y="492">就是“统一格式的会话副本”，不是网络代理，也不是一个额外模型。</text>
 </svg>
 </div></body>
 </html>

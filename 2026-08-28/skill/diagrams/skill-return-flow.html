@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill 如何注入回用户系统</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono{font-family:"Geist Mono","Noto Sans Mono CJK SC",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.zone-title{font:600 14px "Geist Mono","Noto Sans Mono CJK SC",monospace;letter-spacing:1px;fill:#4f5d75}.label{font-size:16px;font-weight:600;fill:#2d3142}.sub{font-size:12px;fill:#4f5d75}.zone{fill:#fff;stroke:#c8cdd7;stroke-width:2}.server{fill:#f1f4f8}.node{fill:#fff;stroke:#4f5d75;stroke-width:2}.accent{fill:#fff5ef;stroke:#eb6c36;stroke-width:3}.store{fill:#eef3fb;stroke:#2e5aa8;stroke-width:2}.flow{fill:none;stroke:#4f5d75;stroke-width:2;marker-end:url(#return-arrow)}.primary{fill:none;stroke:#eb6c36;stroke-width:3;marker-end:url(#return-arrow-accent)}.download{fill:none;stroke:#2e5aa8;stroke-width:2;stroke-dasharray:8 8;marker-end:url(#return-arrow-link)}.edge{font:500 12px "Geist Mono","Noto Sans Mono CJK SC",monospace;fill:#4f5d75}.note{fill:#fff8e8;stroke:#d6a63c;stroke-width:2}.note-copy{font-size:13px;fill:#604a18}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="return-title return-desc">
+  <title id="return-title">Skill 如何注入回用户系统</title>
+  <desc id="return-desc">服务端在共享 Skill Git 仓库里保存 Main 和 Staging，并为每个客户端生成带 side 和 commit SHA 的清单。客户端拉取 Git bundle，把本地工作副本切到指定提交，再通过链接或复制安装到 Agent 自己的 Skill discovery 目录。服务端无需逐台修改用户文件。</desc>
+  <defs>
+    <marker id="return-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="return-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="return-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">QUESTION 4 · DISTRIBUTION</text>
+  <text class="title" x="48" y="88">服务端选版本，客户端完成安装</text>
+
+  <rect class="zone server" x="48" y="124" width="568" height="464" rx="16"/>
+  <rect class="zone" x="656" y="124" width="576" height="464" rx="16"/>
+
+  <!-- Connectors first -->
+  <path class="flow" d="M264 304 H336"/>
+  <path class="download" d="M568 304 H704"/>
+  <path class="primary" d="M896 304 H944"/>
+  <path class="primary" d="M1040 368 V424"/>
+
+  <text class="zone-title" x="72" y="154">XSkill 服务端 · SHARED</text>
+  <text class="sub" x="72" y="178">团队共用一套 Skill 仓库，但每个 Client 可以拿到不同版本</text>
+  <rect class="store" x="80" y="240" width="184" height="128" rx="12"/>
+  <text class="label" x="172" y="272" text-anchor="middle">团队 Skill Git 仓库</text>
+  <text class="sub" x="172" y="300" text-anchor="middle">Main · Staging</text>
+  <text class="sub mono" x="172" y="324" text-anchor="middle">commit SHA</text>
+  <text class="sub" x="172" y="348" text-anchor="middle">EditAgent 只改这里</text>
+  <rect class="accent" x="336" y="240" width="232" height="128" rx="12"/>
+  <text class="label" x="452" y="272" text-anchor="middle">为这个 Client 生成清单</text>
+  <text class="sub mono" x="452" y="300" text-anchor="middle">deploy-python</text>
+  <text class="sub mono" x="452" y="324" text-anchor="middle">side=staging</text>
+  <text class="sub mono" x="452" y="348" text-anchor="middle">sha=b71c42…</text>
+
+  <text class="zone-title" x="680" y="154">用户机器 · PRIVATE</text>
+  <text class="sub" x="680" y="178">Client 只修改自己的工作副本和 Agent 安装目录</text>
+  <rect class="store" x="704" y="240" width="192" height="128" rx="12"/>
+  <text class="label" x="800" y="272" text-anchor="middle">本地工作副本</text>
+  <text class="sub mono" x="800" y="300" text-anchor="middle">~/.xskill/skill/…</text>
+  <text class="sub" x="800" y="324" text-anchor="middle">拉 Git bundle</text>
+  <text class="sub" x="800" y="348" text-anchor="middle">checkout 指定 SHA</text>
+  <rect class="accent" x="944" y="240" width="192" height="128" rx="12"/>
+  <text class="label" x="1040" y="272" text-anchor="middle">本机安装器</text>
+  <text class="sub" x="1040" y="300" text-anchor="middle">链接优先，必要时复制</text>
+  <text class="sub" x="1040" y="324" text-anchor="middle">只更新这台机器</text>
+  <text class="sub" x="1040" y="348" text-anchor="middle">记录实际 side + SHA</text>
+  <rect class="store" x="944" y="424" width="192" height="96" rx="12"/>
+  <text class="label" x="1040" y="456" text-anchor="middle">Agent 的 Skill 目录</text>
+  <text class="sub mono" x="1040" y="480" text-anchor="middle">~/.claude/skills/…</text>
+  <text class="sub mono" x="1040" y="500" text-anchor="middle">~/.agents/skills/…</text>
+
+  <text class="edge" x="300" y="288" text-anchor="middle">选 side</text>
+  <text class="edge" x="636" y="288" text-anchor="middle">清单 + bundle</text>
+  <text class="edge" x="920" y="288" text-anchor="middle">对齐</text>
+  <text class="edge" x="1068" y="404">安装</text>
+
+  <rect class="note" x="80" y="432" width="488" height="88" rx="12"/>
+  <text class="note-copy" x="104" y="466">团队共享的是服务端仓库和学习证据；</text>
+  <text class="note-copy" x="104" y="494">分发是逐 Client 执行的，不需要服务端逐台写用户路径。</text>
+</svg>
+</div></body>
+</html>
