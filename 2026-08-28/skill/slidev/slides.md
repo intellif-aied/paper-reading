@@ -9,28 +9,19 @@ routerMode: hash
 hideInToc: true
 ---
 
-<div class="xslide dark cover" data-slide="cover">
+<div class="xslide dark cover opening" data-slide="cover">
 <p class="kicker">XSkill · Paper Reading</p>
     <h1 id="cover-title">把会话经验变成<br><span class="cyan">可试用、可回滚</span>的 Skill</h1>
     <div class="cover-rule"></div>
-    <p class="subtitle">从 Session 采集，到 Skill 生成、金丝雀评估与版本回注</p>
-    <div class="cover-meta"><span class="pill">Session → Skill</span><span class="pill">Git versions</span><span class="pill">Canary feedback</span></div>
-    <p class="cover-date">2026-08-28 · paper reading</p>
-</div>
-
----
-
-<div class="xslide dark" data-slide="problem">
-<p class="kicker">Why lifecycle management</p>
-    <h2 id="problem-title">Skill 写出来以后，问题才开始</h2>
+    <p class="subtitle">XSkill 关心的不是“再生成一个 Skill”，而是 Skill 写出来以后如何筛选、评估与回滚。</p>
     <div class="problem-layout">
       <p class="problem-copy">哪个经验值得写？<br>新版本是否<span>真的更好</span>？<br>退化时怎样<span>安全回滚</span>？</p>
       <div class="dark-stats">
         <div class="dark-stat"><span class="number small">139</span><p>论文记录的一台重度用户机器上的 Skill 文件数</p></div>
-        <div class="dark-stat"><span class="number small">26,448</span><p>只列出这些 Skill description 所需的字符数</p></div>
-        <div class="dark-stat"><span class="number small">3.3×</span><p>相对 8,000 字符 listing budget 的溢出</p></div>
+        <div class="dark-stat"><span class="number small">3.3×</span><p><strong>26,448</strong> 个 description 字符，相对 8,000 字符 listing budget 的溢出</p></div>
       </div>
     </div>
+    <p class="cover-date">2026-08-28 · paper reading</p>
 </div>
 
 ---
