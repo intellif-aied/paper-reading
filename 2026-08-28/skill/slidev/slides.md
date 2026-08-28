@@ -24,10 +24,28 @@ hideInToc: true
 
 ---
 
-<div class="xslide light fit" data-slide="questions">
-<p class="kicker">Talk map</p>
-    <h2 id="questions-title">四个机制、一个案例与附录</h2>
-    <div class="chapter-toc"><Toc :columns="2" :maxDepth="1" /></div>
+<div class="xslide light fit compact" data-slide="paper-value">
+<p class="kicker">先说结论 · 贡献</p>
+    <h2 id="paper-value-title">论文最有价值的部分</h2>
+    <div class="grid two">
+      <article class="card"><span class="feedback-no">01 · 完整生命周期</span><h3>七个环节进入同一套系统</h3><p>采集、蒸馏、去重、发布、评估、回滚和分发。</p></article>
+      <article class="card"><span class="feedback-no">02 · 版本级线上实验</span><h3>Git 分支连接真实用户流量</h3><p><code>main</code> 与 <code>staging</code> 并行分发，由线上反馈决定新版晋升或冻结。</p></article>
+      <article class="card"><span class="feedback-no">03 · 跨 Agent 兼容</span><h3>五种 Agent 共用一份 Skill</h3><p>统一格式接收会话；兼容的 <code>SKILL.md</code> frontmatter 交给各 Agent 原生加载。</p></article>
+      <article class="card"><span class="feedback-no">04 · 源码级调查</span><h3>横向核查 11 个同类系统</h3><p>比较时区分线上真实流量评估与离线固定场景验证。</p></article>
+    </div>
+</div>
+
+---
+
+<div class="xslide light fit compact" data-slide="paper-limits">
+<p class="kicker">先说结论 · 边界</p>
+    <h2 id="paper-limits-title">论文当前最薄弱的部分</h2>
+    <div class="grid two">
+      <article class="card"><span class="feedback-no">01 · 参数</span><h3>关键参数仍是默认值</h3><p>UX 权重、证据阈值、最小样本量、流量比例、超时和最小效应量均未校准。</p></article>
+      <article class="card"><span class="feedback-no">02 · 统计</span><h3>AtomTask 不是独立样本</h3><p>同一用户、同一 Session 的任务彼此相关；按任务做 Welch t-test 会夸大 5–10 人团队的统计功效。</p></article>
+      <article class="card"><span class="feedback-no">03 · 对照</span><h3>Canary 只回答“哪个版本更好”</h3><p><code>staging vs main</code> 不能证明“使用 Skill”优于“不使用 Skill”。</p></article>
+      <article class="card"><span class="feedback-no">04 · 退出</span><h3>Freeze 只退出坏版本</h3><p>失败的 <code>staging</code> 会停止分发；长期低价值的 <code>main</code> Skill 如何淘汰，算法没有定义。</p></article>
+    </div>
 </div>
 
 ---
