@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useNav } from '@slidev/client'
 
-const { currentSlideNo, go, total } = useNav()
+const { currentSlideNo, go, slides } = useNav()
 
 function jump(event: Event) {
   go(Number((event.target as HTMLSelectElement).value))
@@ -12,8 +12,8 @@ function jump(event: Event) {
   <label class="xskill-jump" title="跳转到指定页">
     <span class="sr-only">跳转到指定页</span>
     <select :value="currentSlideNo" aria-label="跳转到指定页" @change="jump">
-      <option v-for="page in total" :key="page" :value="page">
-        {{ page }}
+      <option v-for="slide in slides" :key="slide.no" :value="slide.no">
+        {{ slide.no }}{{ slide.meta.slide.title ? ` · ${slide.meta.slide.title}` : '' }}
       </option>
     </select>
   </label>

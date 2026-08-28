@@ -68,9 +68,33 @@ mdc: true
 </div>
 
 ---
+title: 01 · Session 采集
+level: 1
+---
+
+<div class="xslide dark chapter" data-slide="chapter-capture" data-chapter="01">
+<p class="kicker">Chapter 01 · Capture</p>
+    <h2>Session 如何进入 XSkill？</h2>
+    <p class="lead">先把不同 Agent 的原生日志变成同一种、可追溯的会话文本。</p>
+    <div class="chapter-track"><span class="active">01 采集</span><span>02 生成</span><span>03 评估</span><span>04 回注</span></div>
+</div>
+
+---
 
 <div class="xslide diagram-slide" data-slide="capture">
 <iframe class="diagram" src="/paper-reading/2026-08-28/skill/trajectory-normalization.html" title="Session 从本机原生日志进入服务端会话库"></iframe>
+</div>
+
+---
+title: 02 · Skill 生成
+level: 1
+---
+
+<div class="xslide dark chapter" data-slide="chapter-generate" data-chapter="02">
+<p class="kicker">Chapter 02 · Generate</p>
+    <h2>Session 如何变成 Skill？</h2>
+    <p class="lead">三个服务端 Agent 把长会话逐步收窄为候选证据，再提交新的 Git 版本。</p>
+    <div class="chapter-track"><span>01 采集</span><span class="active">02 生成</span><span>03 评估</span><span>04 回注</span></div>
 </div>
 
 ---
@@ -108,6 +132,18 @@ mdc: true
 </div>
 
 ---
+title: 03 · Canary 评估
+level: 1
+---
+
+<div class="xslide dark chapter" data-slide="chapter-evaluate" data-chapter="03">
+<p class="kicker">Chapter 03 · Evaluate</p>
+    <h2>如何判断新版本更好？</h2>
+    <p class="lead">Main 与 Staging 同时接受真实任务；归到具体 commit 的 UX score 决定胜负。</p>
+    <div class="chapter-track"><span>01 采集</span><span>02 生成</span><span class="active">03 评估</span><span>04 回注</span></div>
+</div>
+
+---
 
 <div class="xslide white fit" data-slide="canary-definition">
 <p class="kicker">Canary rollout</p>
@@ -139,6 +175,18 @@ mdc: true
       <article class="card"><span class="feedback-no">04</span><h3>按版本比较</h3><p>分数进入对应 SHA 的账本；样本达到门槛后裁决。</p></article>
     </div>
     <p class="definition">这里没有“请给 Skill 打五星”的弹窗：用户行为提供反馈，版本归因把反馈变成可比较的数据。</p>
+</div>
+
+---
+title: 04 · Skill 回注
+level: 1
+---
+
+<div class="xslide dark chapter" data-slide="chapter-return" data-chapter="04">
+<p class="kicker">Chapter 04 · Distribute</p>
+    <h2>Skill 如何回到用户的 Agent？</h2>
+    <p class="lead">服务端只选择版本；每台 Client 自己对齐 commit，并安装到本机 Skill 目录。</p>
+    <div class="chapter-track"><span>01 采集</span><span>02 生成</span><span>03 评估</span><span class="active">04 回注</span></div>
 </div>
 
 ---
