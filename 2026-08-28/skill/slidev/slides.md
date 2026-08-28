@@ -340,7 +340,7 @@ level: 2
 
 ---
 
-<div class="xslide dark takeaways" data-slide="takeaways">
+<div class="xslide takeaways" data-slide="takeaways">
 <p class="kicker">Summary</p>
     <h2 id="takeaways-title">总结</h2>
     <div class="takeaway-list">
