@@ -12,7 +12,7 @@
 <body><div class="frame">
 <svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="alg1-loop-title alg1-loop-desc">
   <title id="alg1-loop-title">Algorithm 1：三 Agent 蒸馏循环</title>
-  <desc id="alg1-loop-desc">每条轨迹先被 TaskAgent 切成 AtomTask，再由 TaskClusterAgent 路由进候选证据池。证据权重没有达到阈值时等待下一条轨迹并重新循环；达到阈值且通过守卫条件后，SkillEditAgent 生成 SKILL.md，并提交到 main 或 staging。</desc>
+  <desc id="alg1-loop-desc">每条轨迹先被 TaskAgent 切成 AtomTask，再由 TaskClusterAgent 为 Atom 到 Skill 的复用价值打 evidence weight 并路由进候选证据池。累计权重达到阈值后，SkillEditAgent 生成 SKILL.md，并提交为 main 或 staging 的 Git 版本。</desc>
   <defs>
     <marker id="alg1-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
     <marker id="alg1-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
@@ -20,7 +20,7 @@
   </defs>
   <rect width="1280" height="720" fill="#f5f5f5"/>
   <text class="eyebrow" x="48" y="44">ALGORITHM 1 · PROCESS + FEEDBACK LOOP</text>
-  <text class="title" x="48" y="88">关键不是三个 Agent，而是证据跨 Session 累积</text>
+  <text class="title" x="48" y="88">证据跨 Session 累积，达到门槛才提交新版本</text>
 
   <!-- Connectors first -->
   <path class="flow" d="M304 236 H352"/>
@@ -76,7 +76,7 @@
   <text class="copy" x="664" y="576" text-anchor="middle">下一条 trajectory delta 重新进入 Stage 1</text>
 
   <line x1="48" y1="648" x2="1232" y2="648" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
-  <text class="aside" x="48" y="680">Loop 的状态保存在 candidates.yml：会话结束了，证据并没有消失。</text>
+  <text class="aside" x="48" y="680">w 衡量 Atom 对该 Skill 的复用价值（1–10）；Σw ≥ 10 触发编辑，输出是 main 或 staging 的 Git commit。</text>
 </svg>
 </div></body>
 </html>

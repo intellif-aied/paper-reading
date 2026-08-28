@@ -12,7 +12,7 @@
 <body><div class="frame">
 <svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fastapi-life-title fastapi-life-desc">
   <title id="fastapi-life-title">FastAPI Deployment Skill 生命周期案例</title>
-  <desc id="fastapi-life-desc">构造案例从开发者本地 Claude Code 会话开始，经过服务端拆分、路由、候选证据累积、SkillEditAgent 写作和 Git staging 提交，再由团队成员承担金丝雀流量并最终把候选合并到 main。</desc>
+  <desc id="fastapi-life-desc">开发者 A 是八名团队成员之一。A 的本地 Claude Code 会话上传到 XSkill 服务端，经三个 Agent 处理后写入服务端管理的团队 Skill Git 仓库；团队各成员的客户端再按分配版本参与金丝雀评估。</desc>
   <defs>
     <marker id="fastapi-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
     <marker id="fastapi-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
@@ -20,7 +20,7 @@
   </defs>
   <rect width="1280" height="720" fill="#f5f5f5"/>
   <text class="eyebrow" x="48" y="44">WORKED EXAMPLE · ILLUSTRATIVE, NOT MEASURED</text>
-  <text class="title" x="48" y="88">FastAPI 部署会话怎样走完一次 Skill 生命周期</text>
+  <text class="title" x="48" y="88">FastAPI：一次会话如何更新团队共享 Skill</text>
   <rect x="1024" y="28" width="208" height="32" rx="4" fill="rgba(235,108,54,.08)" stroke="#eb6c36" stroke-width="1"/>
   <text class="tag" x="1128" y="48" text-anchor="middle">PAPER'S HYPOTHETICAL NUMBERS</text>
 
@@ -34,10 +34,14 @@
   <line x1="144" y1="596" x2="1232" y2="596" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
   <line x1="144" y1="148" x2="144" y2="596" stroke="rgba(45,49,66,.20)" stroke-width="1"/>
 
-  <text class="lane" x="72" y="208" text-anchor="middle">CLIENT A</text>
-  <text class="lane" x="72" y="320" text-anchor="middle">SERVER</text>
-  <text class="lane" x="72" y="432" text-anchor="middle">SKILL GIT</text>
-  <text class="lane" x="72" y="544" text-anchor="middle">TEAM CLIENTS</text>
+  <text class="lane" x="72" y="196" text-anchor="middle">开发者 A 本机</text>
+  <text class="lane" x="72" y="220" text-anchor="middle">TEAM MEMBER A</text>
+  <text class="lane" x="72" y="308" text-anchor="middle">XSKILL 服务端</text>
+  <text class="lane" x="72" y="332" text-anchor="middle">处理流水线</text>
+  <text class="lane" x="72" y="420" text-anchor="middle">XSKILL 服务端</text>
+  <text class="lane" x="72" y="444" text-anchor="middle">团队 SKILL GIT</text>
+  <text class="lane" x="72" y="532" text-anchor="middle">团队成员本机</text>
+  <text class="lane" x="72" y="556" text-anchor="middle">8 CLIENTS · 含 A</text>
 
   <!-- Step headers -->
   <text class="step" x="200" y="136" text-anchor="middle">01 CAPTURE</text>
@@ -70,9 +74,9 @@
   <text class="sub" x="336" y="336">UX 8.0 / 5.5 / 7.0</text>
 
   <rect class="node" x="416" y="280" width="112" height="72" rx="8"/>
-  <text class="name" x="472" y="300">TCA route</text>
-  <text class="sub" x="472" y="320">python: 4.0 + 3.5</text>
-  <text class="sub" x="472" y="336">sqlite baby: 5.5</text>
+  <text class="name" x="472" y="300">TaskClusterAgent</text>
+  <text class="sub" x="472" y="320">TCA · route</text>
+  <text class="sub" x="472" y="336">w: 4.0 + 3.5 / 5.5</text>
 
   <rect class="store" x="552" y="392" width="112" height="72" rx="8"/>
   <text class="name" x="608" y="412">candidates.yml</text>
@@ -80,9 +84,9 @@
   <text class="sub" x="608" y="448">Σw = 14.5 &gt; θ</text>
 
   <rect class="node" x="688" y="280" width="112" height="72" rx="8"/>
-  <text class="name" x="744" y="300">SEA synthesize</text>
-  <text class="sub" x="744" y="320">candidates + old body</text>
-  <text class="sub" x="744" y="336">updated SKILL.md</text>
+  <text class="name" x="744" y="300">SkillEditAgent</text>
+  <text class="sub" x="744" y="320">SEA · 修改 SKILL.md</text>
+  <text class="sub" x="744" y="336">候选证据 + 旧正文</text>
 
   <rect class="focal" x="824" y="392" width="112" height="72" rx="8"/>
   <text class="name" x="880" y="412">staging commit</text>
@@ -90,9 +94,9 @@
   <text class="sub" x="880" y="448">side + commit SHA</text>
 
   <rect class="focal" x="960" y="504" width="112" height="72" rx="8"/>
-  <text class="name" x="1016" y="524">2 / 8 users</text>
-  <text class="sub" x="1016" y="544">week 2: M15 / S9</text>
-  <text class="sub" x="1016" y="560">staging 仍未满 20</text>
+  <text class="name" x="1016" y="524">2 / 8 Clients</text>
+  <text class="sub" x="1016" y="544">团队含开发者 A</text>
+  <text class="sub" x="1016" y="560">week 2: M15 / S9</text>
 
   <rect class="store" x="1096" y="392" width="112" height="72" rx="8"/>
   <text class="name" x="1152" y="412">merge main</text>
@@ -100,8 +104,8 @@
   <text class="sub" x="1152" y="448">M μ6.8 · p=.038</text>
 
   <line x1="48" y1="632" x2="1232" y2="632" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
-  <text class="foot-strong" x="48" y="660">这个例子说明机制如何连接，不是实验结果。</text>
-  <text class="foot" x="48" y="684">UX、样本数、均值和 p 值均由论文为讲解构造；不能据此推断真实团队三周即可收敛。</text>
+  <text class="foot-strong" x="48" y="660">开发者 A 是 8 名团队成员之一；A 的会话贡献共享 Skill，金丝雀可分配给团队内任意成员。</text>
+  <text class="foot" x="48" y="684">团队 Skill Git 由 XSkill 服务端维护；各成员的 Client 只同步并安装指定 commit。效果数字均为论文构造。</text>
 </svg>
 </div></body>
 </html>

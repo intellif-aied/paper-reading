@@ -37,7 +37,7 @@ hideInToc: true
 
 <div class="xslide light fit" data-slide="questions">
 <p class="kicker">Talk map</p>
-    <h2 id="questions-title">四个机制问题，再走一遍完整案例</h2>
+    <h2 id="questions-title">四个机制、一个案例与附录</h2>
     <div class="chapter-toc"><Toc :columns="2" :maxDepth="1" /></div>
 </div>
 
@@ -78,7 +78,7 @@ routeAlias: chapter-capture
     <h1>Session 如何进入 XSkill？</h1>
     <p class="lead">先把不同 Agent 的原生日志变成同一种、可追溯的会话文本。</p>
     <span class="chapter-number" aria-hidden="true">01</span>
-    <div class="chapter-track"><Link to="chapter-capture" class="active">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example">05 案例</Link></div>
+    <div class="chapter-track"><Link to="chapter-capture" class="active">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example">05 案例</Link><Link to="chapter-appendix">附录</Link></div>
 </div>
 
 ---
@@ -104,7 +104,7 @@ routeAlias: chapter-generate
     <h1>Session 如何变成 Skill？</h1>
     <p class="lead">三个服务端 Agent 把长会话逐步收窄为候选证据，再提交新的 Git 版本。</p>
     <span class="chapter-number" aria-hidden="true">02</span>
-    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate" class="active">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example">05 案例</Link></div>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate" class="active">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example">05 案例</Link><Link to="chapter-appendix">附录</Link></div>
 </div>
 
 ---
@@ -146,7 +146,7 @@ Ensure: Updated skill repository
 29      end if
 30    end if
 31  end for</code></pre>
-    <p class="algorithm-note">原文保留三层循环：遍历 Atom、遍历 Atom 路由、再遍历整个 Skill catalog 检查证据门槛。</p>
+    <p class="algorithm-note"><strong>ux_score：</strong>TaskAgent 从任务完成、用户修正与 Skill 归因提取的 1–10 分；它随 Atom 保存，留给后面的金丝雀版本比较。</p>
 </div>
 
 ---
@@ -160,33 +160,8 @@ level: 2
 </div>
 
 ---
-title: Weightscore 与 UX score
-level: 2
----
-
-<div class="xslide light fit" data-slide="two-scores">
-<p class="kicker">Two separate decisions</p>
-    <h2 id="two-scores-title">别把两个 1–10 分混在一起</h2>
-    <div class="compare">
-      <article class="compare-panel">
-        <span class="panel-tag">是否值得改 SKILL？</span><h3>Weightscore · 复用证据</h3>
-        <div class="formula">每条 Candidate：1–10<br>按 Skill 累计：Σ weightscore<br>默认达到 10 → 触发 SkillEditAgent</div>
-        <div class="code-line"><b>谁给分</b><span>TaskClusterAgent</span></div>
-        <div class="code-line"><b>回答</b><span>这个任务对这个 Skill 有多大复用价值？</span></div>
-      </article>
-      <article class="compare-panel">
-        <span class="panel-tag">新版本是否更好？</span><h3>UX score · 使用结果</h3>
-        <div class="formula">每个真实任务：1–10<br>记录：skill + side + commit SHA<br>样本够用 → 比较 Main / Staging</div>
-        <div class="code-line"><b>谁给分</b><span>TaskAgent 根据会话结果生成</span></div>
-        <div class="code-line"><b>回答</b><span>用户使用这个具体版本完成任务的体验如何？</span></div>
-      </article>
-    </div>
-    <p class="definition">Weightscore 决定“要不要写新版本”；UX score 决定“新版本要不要成为 Main”。</p>
-</div>
-
----
 layout: full
-title: Skill 版本管理
+title: 三个 Agent 的输出如何进入版本管理
 level: 2
 ---
 
@@ -207,7 +182,7 @@ routeAlias: chapter-evaluate
     <h1>如何判断新版本更好？</h1>
     <p class="lead">Main 与 Staging 同时接受真实任务；归到具体 commit 的 UX score 决定胜负。</p>
     <span class="chapter-number" aria-hidden="true">03</span>
-    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate" class="active">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example">05 案例</Link></div>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate" class="active">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example">05 案例</Link><Link to="chapter-appendix">附录</Link></div>
 </div>
 
 ---
@@ -278,20 +253,20 @@ level: 2
 </div>
 
 ---
-title: UX score 的版本归因
+title: UX score 如何归到具体版本
 level: 2
 ---
 
 <div class="xslide light fit" data-slide="ux-score">
 <p class="kicker">Evaluation data path</p>
-    <h2 id="ux-score-title">用户只需正常工作；系统把结果归到实际版本</h2>
+    <h2 id="ux-score-title">UX score 衡量一个版本在真实任务中的使用结果</h2>
     <div class="grid four feedback-steps">
       <article class="card"><span class="feedback-no">01</span><h3>记录曝光版本</h3><p>Client 安装时记下 Skill、Main/Staging 与 commit SHA。</p></article>
       <article class="card"><span class="feedback-no">02</span><h3>完成真实任务</h3><p>用户继续使用原来的 Coding Agent，不需要切换版本。</p></article>
       <article class="card"><span class="feedback-no">03</span><h3>生成 UX score</h3><p>TaskAgent 根据完成情况、修正和结果给出 1–10 分。</p></article>
       <article class="card"><span class="feedback-no">04</span><h3>按版本比较</h3><p>分数进入对应 SHA 的账本；样本达到门槛后裁决。</p></article>
     </div>
-    <p class="definition">这里没有“请给 Skill 打五星”的弹窗：用户行为提供反馈，版本归因把反馈变成可比较的数据。</p>
+    <p class="definition"><strong>UX score：</strong>TaskAgent 根据任务完成、用户修正与 Skill 归因生成 1–10 分；它只用于比较 Main / Staging，不参与生成新版本的证据门槛。</p>
 </div>
 
 ---
@@ -317,7 +292,7 @@ routeAlias: chapter-return
     <h1>Skill 如何回到用户的 Agent？</h1>
     <p class="lead">服务端只选择版本；每台 Client 自己对齐 commit，并安装到本机 Skill 目录。</p>
     <span class="chapter-number" aria-hidden="true">04</span>
-    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return" class="active">04 回注</Link><Link to="chapter-example">05 案例</Link></div>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return" class="active">04 回注</Link><Link to="chapter-example">05 案例</Link><Link to="chapter-appendix">附录</Link></div>
 </div>
 
 ---
@@ -333,17 +308,17 @@ level: 2
 ---
 layout: section
 class: xskill-section
-title: 05 · FastAPI 案例如何走完整个生命周期？
+title: 05 · 真实案例
 level: 1
 routeAlias: chapter-example
 ---
 
 <div class="chapter-content" data-slide="chapter-example">
 <p class="kicker">Chapter 05 · Worked Example</p>
-    <h1>把五个抽象步骤落到一个 FastAPI 会话</h1>
-    <p class="lead">论文用一组明确标为构造的数据，串起采集、拆分、路由、编辑、金丝雀和晋升。</p>
+    <h1>真实案例</h1>
+    <p class="lead">FastAPI Deployment Skill 生命周期；过程具体，效果数字为论文构造。</p>
     <span class="chapter-number" aria-hidden="true">05</span>
-    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example" class="active">05 案例</Link></div>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example" class="active">05 案例</Link><Link to="chapter-appendix">附录</Link></div>
 </div>
 
 ---
@@ -357,39 +332,33 @@ level: 2
 </div>
 
 ---
-title: FastAPI 案例的产物账本
-level: 2
----
-
-<div class="xslide light fit" data-slide="fastapi-artifacts">
-<p class="kicker">Worked example · artifact ledger</p>
-    <h2>每一步发生在哪里，留下什么</h2>
-    <table class="artifact-ledger">
-      <thead><tr><th>Step</th><th>位置 / Owner</th><th>持久化产物</th><th>FastAPI 案例</th></tr></thead>
-      <tbody>
-        <tr><td>01 · Capture</td><td><span class="side-chip client">Client A</span></td><td><code>3832444b.jsonl</code><br>上传 sanitized delta</td><td>clone、端口、依赖、启动、SQLite migration 的原生会话</td></tr>
-        <tr><td>02 · Decompose</td><td><span class="side-chip server">Server · TaskAgent</span></td><td>3 条 <code>AtomTask</code> 记录<br><span class="muted-cell">论文未指定物理文件名</span></td><td><code>atom_0001..3</code>；UX 为 8.0 / 5.5 / 7.0</td></tr>
-        <tr><td>03 · Route</td><td><span class="side-chip server">Server · TCA</span><br><span class="side-chip git">Skill Git</span></td><td><code>python-deploy/.candidates.yml</code><br><code>sqlite-migration-debug/</code> baby folder</td><td>4.0 + 3.5 路由到 python-deploy；5.5 新建 baby</td></tr>
-        <tr><td>04 · Edit</td><td><span class="side-chip server">Server · SEA</span><br><span class="side-chip git">Skill Git</span></td><td>更新 <code>python-deploy/SKILL.md</code><br>一个 staging commit SHA</td><td>读取 3 条轨迹的 6 个 atoms；总权重 14.5</td></tr>
-        <tr><td>05 · Canary</td><td><span class="side-chip server">Server router</span><br><span class="side-chip client">8 Team Clients</span></td><td>side + commit 的曝光/UX 记录<br>各 Client 本机安装的 <code>SKILL.md</code></td><td>2/8 人 staging；构造的 p=.038 后 merge main</td></tr>
-      </tbody>
-    </table>
-    <p class="algorithm-note">精确文件名只在论文明确给出时列出；AtomTask store 与分流清单的物理文件名没有在论文中定义。</p>
-</div>
-
----
 
 <div class="xslide dark takeaways" data-slide="takeaways">
-<p class="kicker">The whole loop</p>
-    <h2 id="takeaways-title">四个机制，加一个完整案例</h2>
+<p class="kicker">Summary</p>
+    <h2 id="takeaways-title">总结</h2>
     <div class="takeaway-list">
       <div class="takeaway"><b>01</b><p>采集：Client 把本机原生日志转换为统一会话文本；Team 模式再脱敏上传。</p></div>
       <div class="takeaway"><b>02</b><p>生成：服务端三个 Agent 把 Session 收窄成 Candidate，累计后修改团队 Skill Git 仓库。</p></div>
       <div class="takeaway"><b>03</b><p>评估：Main 与 Staging 同时服务真实任务，UX score 决定候选版本是否胜出。</p></div>
       <div class="takeaway"><b>04</b><p>回注：服务端下发 side + SHA；每台 Client 对齐本地副本并安装到自己的 Agent。</p></div>
-      <div class="takeaway"><b>05</b><p>案例：FastAPI 示例把每一步的 owner、文件产物和版本状态串在一起；其中效果数字是构造值。</p></div>
     </div>
     <p class="question-end">贯穿全链路的主键不是“最新版”，而是一个不可变的 Git commit。</p>
+</div>
+
+---
+layout: section
+class: xskill-section
+title: 附录
+level: 1
+routeAlias: chapter-appendix
+---
+
+<div class="chapter-content" data-slide="chapter-appendix">
+<p class="kicker">Appendix</p>
+    <h1>附录</h1>
+    <p class="lead">运行模式、论文与实现差异、参考材料。</p>
+    <span class="chapter-number" aria-hidden="true">A</span>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example">05 案例</Link><Link to="chapter-appendix" class="active">附录</Link></div>
 </div>
 
 ---
