@@ -54,6 +54,7 @@ html,body,#app{width:100%;height:100%;overflow:hidden}
 .slidev-layout .xslide.fit .version-row{padding:.65rem .9rem}
 .slidev-layout .xslide.fit .mode{min-height:0}
 .slidev-layout .xslide.fit .card,.slidev-layout .xslide.fit .version-card,.slidev-layout .xslide.fit .compare-panel,.slidev-layout .xslide.fit .probe-panel{padding:1rem 1.2rem}
+.slidev-layout .xslide.fit .question{padding:4.25rem 1.2rem 1rem}
 .slidev-layout .xslide.fit .version-card .share{font-size:2.2rem}
 .slidev-layout .xslide.fit .formula{padding:.7rem .9rem;line-height:1.5}
 .slidev-layout .xslide.fit .code-line{margin:.35rem 0}
