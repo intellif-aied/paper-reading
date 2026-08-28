@@ -55,6 +55,7 @@ html,body,#app{width:100%;height:100%;overflow:hidden}
 .slidev-layout .xslide.fit .lead{font-size:1.15rem;line-height:1.35}
 .slidev-layout .xslide.fit .skill-layout{gap:1.5rem}
 .slidev-layout .xslide.fit .file-tree{padding:1.25rem;line-height:1.6}
+.slidev-layout .xslide.fit .atom-schema{font-size:.68rem;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere}
 .slidev-layout .xslide.fit .version-stack{gap:.55rem}
 .slidev-layout .xslide.fit .version-row{padding:.65rem .9rem}
 .slidev-layout .xslide.fit .mode{min-height:0}

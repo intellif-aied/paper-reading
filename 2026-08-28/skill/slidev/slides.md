@@ -158,6 +158,43 @@ Ensure: Updated skill repository
 </div>
 
 ---
+title: AtomTask Schema
+level: 2
+---
+
+<div class="xslide light fit compact" data-slide="atomtask-schema">
+<p class="kicker">Chapter 02 · Handoff object</p>
+    <h2 id="atomtask-schema-title">AtomTask 是三个 Agent 共用的任务单元</h2>
+    <div class="probe">
+      <pre class="file-tree atom-schema">{
+  "atom_id": "atom_traj_cc_dsv4_890da9d9_0001",
+  "traj_id": "traj_cc_dsv4_890da9d9",
+  "offset_start": 120,
+  "offset_end": 2400,
+  "intent": "deploy xquiz on port 1717",
+  "summary": "agent cloned repo, read README, configured port, started",
+  "tags": ["deploy", "fastapi"],
+  "used_skills": ["python-deploy"],
+  "ux_score": 7,
+  "pre_atom_id": null,
+  "post_atom_id": "atom_traj_cc_dsv4_890da9d9_0002",
+  "context_prefix": "",
+  "raw_segment": ""
+}</pre>
+      <div class="probe-panel">
+        <h3>字段被谁使用</h3>
+        <div class="audit-list">
+          <div class="audit-item"><span>追溯原 Session</span><b>traj_id + offsets</b></div>
+          <div class="audit-item"><span>TaskClusterAgent 路由</span><b>intent + summary + tags</b></div>
+          <div class="audit-item"><span>金丝雀归因与评分</span><b>used_skills + ux_score</b></div>
+          <div class="audit-item"><span>SkillEditAgent 恢复上下文</span><b>pre/post + raw</b></div>
+        </div>
+        <p class="definition"><strong>团队模式缺口：</strong>Schema 没有 <code>user_id</code> 或 <code>contributor_id</code>，无法直接约束跨用户证据或分析偏好差异。</p>
+      </div>
+    </div>
+</div>
+
+---
 layout: full
 title: Algorithm 1 · 蒸馏循环
 level: 2
