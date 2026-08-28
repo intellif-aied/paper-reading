@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FastAPI Deployment Skill 生命周期案例</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono,.lane,.step,.tag{font-family:"Geist Mono","Noto Sans Mono CJK SC",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.lane{font-size:12px;font-weight:600;letter-spacing:1px;fill:#4f5d75}.step{font-size:8px;font-weight:600;letter-spacing:1px;fill:#7a8399}.node{fill:#fff;stroke:#bfc0c0;stroke-width:1}.focal{fill:rgba(235,108,54,.08);stroke:#eb6c36;stroke-width:1.2}.store{fill:rgba(45,49,66,.05);stroke:#4f5d75;stroke-width:1}.name{font-size:12px;font-weight:600;fill:#2d3142;text-anchor:middle}.sub{font:400 8px "Geist Mono",monospace;fill:#4f5d75;text-anchor:middle}.flow{fill:none;stroke:#4f5d75;stroke-width:1.2;marker-end:url(#fastapi-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:1.2;marker-end:url(#fastapi-arrow-accent)}.tag{font-size:8px;font-weight:600;letter-spacing:1px;fill:#eb6c36}.foot{font-size:12px;fill:#4f5d75}.foot-strong{font-size:12px;font-weight:600;fill:#2d3142}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fastapi-life-title fastapi-life-desc">
+  <title id="fastapi-life-title">FastAPI Deployment Skill 生命周期案例</title>
+  <desc id="fastapi-life-desc">构造案例从开发者本地 Claude Code 会话开始，经过服务端拆分、路由、候选证据累积、SkillEditAgent 写作和 Git staging 提交，再由团队成员承担金丝雀流量并最终把候选合并到 main。</desc>
+  <defs>
+    <marker id="fastapi-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="fastapi-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="fastapi-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">WORKED EXAMPLE · ILLUSTRATIVE, NOT MEASURED</text>
+  <text class="title" x="48" y="88">FastAPI 部署会话怎样走完一次 Skill 生命周期</text>
+  <rect x="1024" y="28" width="208" height="32" rx="4" fill="rgba(235,108,54,.08)" stroke="#eb6c36" stroke-width="1"/>
+  <text class="tag" x="1128" y="48" text-anchor="middle">PAPER'S HYPOTHETICAL NUMBERS</text>
+
+  <!-- Lane backgrounds -->
+  <rect x="144" y="148" width="1088" height="112" fill="rgba(45,49,66,.018)"/>
+  <rect x="144" y="372" width="1088" height="112" fill="rgba(45,49,66,.018)"/>
+  <line x1="144" y1="148" x2="1232" y2="148" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <line x1="144" y1="260" x2="1232" y2="260" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <line x1="144" y1="372" x2="1232" y2="372" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <line x1="144" y1="484" x2="1232" y2="484" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <line x1="144" y1="596" x2="1232" y2="596" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <line x1="144" y1="148" x2="144" y2="596" stroke="rgba(45,49,66,.20)" stroke-width="1"/>
+
+  <text class="lane" x="72" y="208" text-anchor="middle">CLIENT A</text>
+  <text class="lane" x="72" y="320" text-anchor="middle">SERVER</text>
+  <text class="lane" x="72" y="432" text-anchor="middle">SKILL GIT</text>
+  <text class="lane" x="72" y="544" text-anchor="middle">TEAM CLIENTS</text>
+
+  <!-- Step headers -->
+  <text class="step" x="200" y="136" text-anchor="middle">01 CAPTURE</text>
+  <text class="step" x="336" y="136" text-anchor="middle">02 DECOMPOSE</text>
+  <text class="step" x="472" y="136" text-anchor="middle">03 ROUTE</text>
+  <text class="step" x="608" y="136" text-anchor="middle">04 ACCUMULATE</text>
+  <text class="step" x="744" y="136" text-anchor="middle">05 EDIT</text>
+  <text class="step" x="880" y="136" text-anchor="middle">06 COMMIT</text>
+  <text class="step" x="1016" y="136" text-anchor="middle">07 CANARY</text>
+  <text class="step" x="1152" y="136" text-anchor="middle">08 PROMOTE</text>
+
+  <!-- Connectors before nodes -->
+  <path class="flow" d="M256 204 H328 Q336 204 336 212 V276"/>
+  <line class="flow" x1="392" y1="316" x2="416" y2="316"/>
+  <path class="flow" d="M528 316 H600 Q608 316 608 324 V388"/>
+  <path class="flow" d="M664 428 H736 Q744 428 744 420 V348"/>
+  <path class="flow-accent" d="M800 316 H872 Q880 316 880 324 V388"/>
+  <path class="flow-accent" d="M936 428 H1008 Q1016 428 1016 436 V500"/>
+  <path class="flow-accent" d="M1072 540 H1144 Q1152 540 1152 532 V460"/>
+
+  <!-- Nodes -->
+  <rect class="node" x="144" y="168" width="112" height="72" rx="8"/>
+  <text class="name" x="200" y="188">Claude session</text>
+  <text class="sub" x="200" y="208">3832444b.jsonl</text>
+  <text class="sub" x="200" y="224">sanitized delta δ</text>
+
+  <rect class="node" x="280" y="280" width="112" height="72" rx="8"/>
+  <text class="name" x="336" y="300">3 AtomTasks</text>
+  <text class="sub" x="336" y="320">0001 / 0002 / 0003</text>
+  <text class="sub" x="336" y="336">UX 8.0 / 5.5 / 7.0</text>
+
+  <rect class="node" x="416" y="280" width="112" height="72" rx="8"/>
+  <text class="name" x="472" y="300">TCA route</text>
+  <text class="sub" x="472" y="320">python: 4.0 + 3.5</text>
+  <text class="sub" x="472" y="336">sqlite baby: 5.5</text>
+
+  <rect class="store" x="552" y="392" width="112" height="72" rx="8"/>
+  <text class="name" x="608" y="412">candidates.yml</text>
+  <text class="sub" x="608" y="432">6 atoms · 3 trajectories</text>
+  <text class="sub" x="608" y="448">Σw = 14.5 &gt; θ</text>
+
+  <rect class="node" x="688" y="280" width="112" height="72" rx="8"/>
+  <text class="name" x="744" y="300">SEA synthesize</text>
+  <text class="sub" x="744" y="320">candidates + old body</text>
+  <text class="sub" x="744" y="336">updated SKILL.md</text>
+
+  <rect class="focal" x="824" y="392" width="112" height="72" rx="8"/>
+  <text class="name" x="880" y="412">staging commit</text>
+  <text class="sub" x="880" y="432">python-deploy</text>
+  <text class="sub" x="880" y="448">side + commit SHA</text>
+
+  <rect class="focal" x="960" y="504" width="112" height="72" rx="8"/>
+  <text class="name" x="1016" y="524">2 / 8 users</text>
+  <text class="sub" x="1016" y="544">week 2: M15 / S9</text>
+  <text class="sub" x="1016" y="560">staging 仍未满 20</text>
+
+  <rect class="store" x="1096" y="392" width="112" height="72" rx="8"/>
+  <text class="name" x="1152" y="412">merge main</text>
+  <text class="sub" x="1152" y="432">week 3: S22 · μ7.4</text>
+  <text class="sub" x="1152" y="448">M μ6.8 · p=.038</text>
+
+  <line x1="48" y1="632" x2="1232" y2="632" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <text class="foot-strong" x="48" y="660">这个例子说明机制如何连接，不是实验结果。</text>
+  <text class="foot" x="48" y="684">UX、样本数、均值和 p 值均由论文为讲解构造；不能据此推断真实团队三周即可收敛。</text>
+</svg>
+</div></body>
+</html>

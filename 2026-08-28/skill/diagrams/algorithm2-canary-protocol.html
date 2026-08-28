@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Algorithm 2：金丝雀评估协议</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono,.tag,.edge{font-family:"Geist Mono","Noto Sans Mono CJK SC",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.action{fill:#fff;stroke:#bfc0c0;stroke-width:1}.decision{fill:#fff;stroke:#2d3142;stroke-width:1.2}.outcome{fill:#fff;stroke:#4f5d75;stroke-width:1.2}.promote{fill:rgba(235,108,54,.08);stroke:#eb6c36;stroke-width:1.2}.tag{font-size:8px;font-weight:500;letter-spacing:1px;fill:#7a8399}.name{font-size:16px;font-weight:600;fill:#2d3142}.copy{font-size:12px;fill:#4f5d75}.code{font:400 12px "Geist Mono",monospace;fill:#2e5aa8}.flow{fill:none;stroke:#4f5d75;stroke-width:1.2;marker-end:url(#alg2-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:1.2;marker-end:url(#alg2-arrow-accent)}.flow-loop{fill:none;stroke:#4f5d75;stroke-width:1;stroke-dasharray:4 4;marker-end:url(#alg2-arrow)}.edge{font-size:8px;letter-spacing:1px;fill:#7a8399}.warning{font-size:12px;fill:#7a4a18}.warning-tag{font:600 8px "Geist Mono",monospace;letter-spacing:1px;fill:#a57419}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="alg2-protocol-title alg2-protocol-desc">
+  <title id="alg2-protocol-title">Algorithm 2：金丝雀评估协议</title>
+  <desc id="alg2-protocol-desc">协议先检查单一活跃金丝雀和 main 基线，再按用户分流并收集归因到分支的 UX 分数。两个分支各达到二十个样本后执行单侧 Welch 检验，显著更好则晋升，否则冻结；超过超时时间则冻结并返回 TIMEOUT。</desc>
+  <defs>
+    <marker id="alg2-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="alg2-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="alg2-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">ALGORITHM 2 · FLOWCHART</text>
+  <text class="title" x="48" y="88">先建立可比较的两个版本，再让真实流量决定去留</text>
+
+  <!-- Connectors first -->
+  <path class="flow" d="M224 276 H272"/>
+  <path class="flow" d="M448 276 H496"/>
+  <path class="flow" d="M672 276 H680"/>
+  <path class="flow" d="M872 276 H904"/>
+  <path class="flow-accent" d="M776 332 V388"/>
+  <path class="flow-loop" d="M996 224 V176 H584 V220"/>
+  <path class="flow" d="M996 328 V388 H1056"/>
+  <path class="flow-accent" d="M776 484 V516"/>
+  <path class="flow-accent" d="M872 572 H960"/>
+  <path class="flow" d="M680 572 H624"/>
+
+  <!-- Labels -->
+  <rect x="876" y="248" width="24" height="12" rx="2" fill="#f5f5f5"/><text class="edge" x="888" y="256" text-anchor="middle">NO</text>
+  <rect x="780" y="348" width="32" height="12" rx="2" fill="#f5f5f5"/><text class="edge" x="796" y="356" text-anchor="middle">YES</text>
+  <rect x="840" y="148" width="64" height="12" rx="2" fill="#f5f5f5"/><text class="edge" x="872" y="156" text-anchor="middle">NOT YET</text>
+  <rect x="1004" y="344" width="32" height="12" rx="2" fill="#f5f5f5"/><text class="edge" x="1020" y="352" text-anchor="middle">YES</text>
+  <rect x="884" y="544" width="48" height="12" rx="2" fill="#f5f5f5"/><text class="edge" x="908" y="552" text-anchor="middle">BETTER</text>
+  <rect x="628" y="544" width="40" height="12" rx="2" fill="#f5f5f5"/><text class="edge" x="648" y="552" text-anchor="middle">ELSE</text>
+
+  <rect class="action" x="48" y="220" width="176" height="112" rx="8"/>
+  <text class="tag" x="64" y="244">GUARDS</text>
+  <text class="name" x="64" y="268">建立 baseline</text>
+  <text class="copy" x="64" y="292">每个 Skill 仅一个 staging</text>
+  <text class="copy" x="64" y="316">main 至少有 1 个真实分数</text>
+
+  <rect class="action" x="272" y="220" width="176" height="112" rx="8"/>
+  <text class="tag" x="288" y="244">ROUTE USERS</text>
+  <text class="name" x="288" y="268">按用户分流</text>
+  <text class="code" x="288" y="292">ceil(ρ · |U|) → staging</text>
+  <text class="copy" x="288" y="316">其余用户继续 main</text>
+
+  <rect class="action" x="496" y="220" width="176" height="112" rx="8"/>
+  <text class="tag" x="512" y="244">COLLECT</text>
+  <text class="name" x="512" y="268">收集 UX score</text>
+  <text class="code" x="512" y="292">score + side + commit</text>
+  <text class="copy" x="512" y="316">按实际曝光版本归因</text>
+
+  <polygon class="decision" points="776,220 872,276 776,332 680,276"/>
+  <text class="tag" x="776" y="264" text-anchor="middle">SAMPLE GATE</text>
+  <text class="name" x="776" y="288" text-anchor="middle">两侧都 ≥ 20?</text>
+
+  <polygon class="decision" points="996,224 1088,276 996,328 904,276"/>
+  <text class="tag" x="996" y="264" text-anchor="middle">TIME</text>
+  <text class="name" x="996" y="288" text-anchor="middle">elapsed &gt; Tₘₐₓ?</text>
+
+  <rect class="action" x="680" y="388" width="192" height="96" rx="8"/>
+  <text class="tag" x="696" y="412">ONE-SIDED WELCH TEST</text>
+  <text class="name" x="696" y="436">比较 main / staging</text>
+  <text class="code" x="696" y="460">H₀: μstaging ≤ μmain</text>
+
+  <rect class="outcome" x="1056" y="388" width="192" height="96" rx="20"/>
+  <text class="tag" x="1072" y="416">TIMEOUT</text>
+  <text class="name" x="1072" y="440">冻结 staging</text>
+  <text class="copy" x="1072" y="464">保留审计，不再分发</text>
+
+  <polygon class="decision" points="776,516 872,572 776,628 680,572"/>
+  <text class="tag" x="776" y="560" text-anchor="middle">DECISION</text>
+  <text class="name" x="776" y="584" text-anchor="middle">p &lt; .05 且均值更高?</text>
+
+  <rect class="outcome" x="400" y="532" width="224" height="80" rx="20"/>
+  <text class="tag" x="416" y="556">FREEZE</text>
+  <text class="name" x="416" y="580">拒绝候选版本</text>
+  <text class="copy" x="416" y="600">审计保留 · 分发隐藏</text>
+
+  <rect class="promote" x="960" y="532" width="224" height="80" rx="20"/>
+  <text class="tag" x="976" y="556">PROMOTE</text>
+  <text class="name" x="976" y="580">merge staging → main</text>
+  <text class="copy" x="976" y="600">候选成为下一版当前版本</text>
+
+  <line x1="48" y1="656" x2="1232" y2="656" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <text class="warning-tag" x="48" y="680">SPEC CONFLICT</text>
+  <text class="warning" x="160" y="680">Algorithm 2 规定 TIMEOUT → freeze；正文另述 Δmin=0.5 的均值 fallback。实现前必须二选一。</text>
+</svg>
+</div></body>
+</html>

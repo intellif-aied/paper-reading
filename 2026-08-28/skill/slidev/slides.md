@@ -37,8 +37,8 @@ hideInToc: true
 
 <div class="xslide light fit" data-slide="questions">
 <p class="kicker">Talk map</p>
-    <h2 id="questions-title">四个问题，正好组成一个闭环</h2>
-    <div class="chapter-toc"><Toc :columns="2" :maxDepth="2" /></div>
+    <h2 id="questions-title">四个机制问题，再走一遍完整案例</h2>
+    <div class="chapter-toc"><Toc :columns="2" :maxDepth="1" /></div>
 </div>
 
 ---
@@ -78,7 +78,7 @@ routeAlias: chapter-capture
     <h1>Session 如何进入 XSkill？</h1>
     <p class="lead">先把不同 Agent 的原生日志变成同一种、可追溯的会话文本。</p>
     <span class="chapter-number" aria-hidden="true">01</span>
-    <div class="chapter-track"><Link to="chapter-capture" class="active">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link></div>
+    <div class="chapter-track"><Link to="chapter-capture" class="active">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example">05 案例</Link></div>
 </div>
 
 ---
@@ -104,17 +104,59 @@ routeAlias: chapter-generate
     <h1>Session 如何变成 Skill？</h1>
     <p class="lead">三个服务端 Agent 把长会话逐步收窄为候选证据，再提交新的 Git 版本。</p>
     <span class="chapter-number" aria-hidden="true">02</span>
-    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate" class="active">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link></div>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate" class="active">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example">05 案例</Link></div>
+</div>
+
+---
+title: Algorithm 1 · 原始伪代码
+level: 2
+---
+
+<div class="xslide light fit algorithm-page" data-slide="algorithm-1-code">
+<p class="kicker">Paper · Algorithm 1</p>
+    <h2>Three-Agent Skill Distillation Pipeline</h2>
+    <pre class="paper-algorithm"><code>Require: Trajectory delta δ, skill catalog C, threshold θ = 10
+Ensure: Updated skill repository
+ 1  Stage 1: TaskAgent — Decompose δ into AtomTasks
+ 2  A ← TaskAgent.decompose(δ)   {Segment by semantic boundaries}
+ 3  for each atom a ∈ A do
+ 4    Assign a.ux_score ← fUX(a) {Behavioral UX scoring (Eq. 1)}
+ 5    Record a.intent, a.tags, a.used_skills
+ 6  end for
+ 8  Stage 2: TaskClusterAgent — Route atoms to skills
+ 9  for each atom a ∈ A do
+10    (action, skill, w) ← TCA.route(a, C)
+11    if action = CREATE then
+12      Initialize new skill folder in “baby” state with a as first evidence
+13      C ← C ∪ {skill}
+14    else if action = ROUTE then
+15      Append (a, w) to skill.candidates.yml
+16    else if action = RECLASSIFY then
+17      Move a from current skill to better-fit target
+18    end if
+19  end for
+21  Stage 3: SkillEditAgent — Produce or update skills
+22  for each skill s ∈ C do
+23    if Σ(a,w)∈s.candidates w ≥ θ and canary guards pass then
+24      SKILL.md ← SEA.generate(s.candidates, s.existing_body)
+25      if s.branch = baby then
+26        git commit to main       {First public version}
+27      else
+28        git commit to staging    {Canary candidate}
+29      end if
+30    end if
+31  end for</code></pre>
+    <p class="algorithm-note">原文保留三层循环：遍历 Atom、遍历 Atom 路由、再遍历整个 Skill catalog 检查证据门槛。</p>
 </div>
 
 ---
 layout: full
-title: 三 Agent 生成流水线
+title: Algorithm 1 · 蒸馏循环
 level: 2
 ---
 
 <div class="xslide diagram-slide" data-slide="distill">
-<iframe class="diagram" src="/paper-reading/2026-08-28/skill/distillation-pipeline.html" title="服务端三个 Agent 把 Session 变成 Skill 版本"></iframe>
+<iframe class="diagram" src="/paper-reading/2026-08-28/skill/algorithm1-distillation-loop.html" title="Algorithm 1 的三 Agent 蒸馏与跨 Session 证据循环"></iframe>
 </div>
 
 ---
@@ -165,7 +207,7 @@ routeAlias: chapter-evaluate
     <h1>如何判断新版本更好？</h1>
     <p class="lead">Main 与 Staging 同时接受真实任务；归到具体 commit 的 UX score 决定胜负。</p>
     <span class="chapter-number" aria-hidden="true">03</span>
-    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate" class="active">03 评估</Link><Link to="chapter-return">04 回注</Link></div>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate" class="active">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example">05 案例</Link></div>
 </div>
 
 ---
@@ -186,13 +228,53 @@ level: 2
 </div>
 
 ---
+title: Algorithm 2 · 原始伪代码
+level: 2
+---
+
+<div class="xslide light fit algorithm-page" data-slide="algorithm-2-code">
+<p class="kicker">Paper · Algorithm 2</p>
+    <h2>Canary Evaluation Protocol</h2>
+    <pre class="paper-algorithm"><code>Require: Skill s with new staging commit, user set U, routing fraction
+         ρ ∈ (0, 0.5], minimum samples nmin = 20,
+         significance level α = 0.05, timeout Tmax days
+Ensure: Decision ∈ {PROMOTE, FREEZE, TIMEOUT}
+ 1  Guard conditions:
+ 2    Assert no active staging branch for s
+      (one canary at a time; new candidates queue)
+ 3    Assert ≥ 1 real side=main UX score exists
+      (baseline established)
+ 5  User routing:
+ 6    Route ceil(ρ|U|) users to staging; remainder to main
+ 8  Score collection:
+ 9    while |Smain| &lt; nmin or |Sstaging| &lt; nmin do
+10      if elapsed &gt; Tmax then
+11        return TIMEOUT (freeze staging, retain for audit)
+12      end if
+13      Collect UX scores si from AtomTasks using skill s
+14      Attribute each si to Smain or Sstaging based on user's branch
+15    end while
+17  Statistical comparison:
+18    Compute s̄main, s̄staging, σmain, σstaging
+19    Perform one-sided Welch's t-test: H0: μstaging ≤ μmain
+20    if p &lt; α and s̄staging &gt; s̄main then
+21      Merge staging → main
+22      return PROMOTE
+23    else
+24      Freeze staging (retain for audit, hide from distribution)
+25      return FREEZE
+26    end if</code></pre>
+    <p class="algorithm-note"><strong>规范冲突：</strong>Algorithm 2 超时即冻结；正文另述用 Δmin=0.5 做均值 fallback。两者不能同时成立。</p>
+</div>
+
+---
 layout: full
-title: Canary 反馈闭环
+title: Algorithm 2 · 金丝雀协议
 level: 2
 ---
 
 <div class="xslide diagram-slide" data-slide="canary-loop">
-<iframe class="diagram" src="/paper-reading/2026-08-28/skill/canary-feedback-loop.html" title="真实任务反馈驱动 Skill 版本演进"></iframe>
+<iframe class="diagram" src="/paper-reading/2026-08-28/skill/algorithm2-canary-protocol.html" title="Algorithm 2 的用户分流、样本门槛、统计检验与版本裁决"></iframe>
 </div>
 
 ---
@@ -213,6 +295,16 @@ level: 2
 </div>
 
 ---
+layout: full
+title: XSkill 与其他系统的设计分界线
+level: 2
+---
+
+<div class="xslide diagram-slide" data-slide="landscape-comparison">
+<iframe class="diagram" src="/paper-reading/2026-08-28/skill/xskill-landscape-differences.html" title="XSkill 在原生交付、金丝雀评估和 Git 版本控制上的设计差异"></iframe>
+</div>
+
+---
 layout: section
 class: xskill-section
 title: 04 · Skill 如何注入回系统？
@@ -225,7 +317,7 @@ routeAlias: chapter-return
     <h1>Skill 如何回到用户的 Agent？</h1>
     <p class="lead">服务端只选择版本；每台 Client 自己对齐 commit，并安装到本机 Skill 目录。</p>
     <span class="chapter-number" aria-hidden="true">04</span>
-    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return" class="active">04 回注</Link></div>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return" class="active">04 回注</Link><Link to="chapter-example">05 案例</Link></div>
 </div>
 
 ---
@@ -239,15 +331,63 @@ level: 2
 </div>
 
 ---
+layout: section
+class: xskill-section
+title: 05 · FastAPI 案例如何走完整个生命周期？
+level: 1
+routeAlias: chapter-example
+---
+
+<div class="chapter-content" data-slide="chapter-example">
+<p class="kicker">Chapter 05 · Worked Example</p>
+    <h1>把五个抽象步骤落到一个 FastAPI 会话</h1>
+    <p class="lead">论文用一组明确标为构造的数据，串起采集、拆分、路由、编辑、金丝雀和晋升。</p>
+    <span class="chapter-number" aria-hidden="true">05</span>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link><Link to="chapter-example" class="active">05 案例</Link></div>
+</div>
+
+---
+layout: full
+title: FastAPI Deployment Skill 生命周期
+level: 2
+---
+
+<div class="xslide diagram-slide" data-slide="fastapi-lifecycle">
+<iframe class="diagram" src="/paper-reading/2026-08-28/skill/fastapi-lifecycle-swimlane.html" title="FastAPI Deployment Skill 从本地会话到 staging 晋升的构造案例"></iframe>
+</div>
+
+---
+title: FastAPI 案例的产物账本
+level: 2
+---
+
+<div class="xslide light fit" data-slide="fastapi-artifacts">
+<p class="kicker">Worked example · artifact ledger</p>
+    <h2>每一步发生在哪里，留下什么</h2>
+    <table class="artifact-ledger">
+      <thead><tr><th>Step</th><th>位置 / Owner</th><th>持久化产物</th><th>FastAPI 案例</th></tr></thead>
+      <tbody>
+        <tr><td>01 · Capture</td><td><span class="side-chip client">Client A</span></td><td><code>3832444b.jsonl</code><br>上传 sanitized delta</td><td>clone、端口、依赖、启动、SQLite migration 的原生会话</td></tr>
+        <tr><td>02 · Decompose</td><td><span class="side-chip server">Server · TaskAgent</span></td><td>3 条 <code>AtomTask</code> 记录<br><span class="muted-cell">论文未指定物理文件名</span></td><td><code>atom_0001..3</code>；UX 为 8.0 / 5.5 / 7.0</td></tr>
+        <tr><td>03 · Route</td><td><span class="side-chip server">Server · TCA</span><br><span class="side-chip git">Skill Git</span></td><td><code>python-deploy/.candidates.yml</code><br><code>sqlite-migration-debug/</code> baby folder</td><td>4.0 + 3.5 路由到 python-deploy；5.5 新建 baby</td></tr>
+        <tr><td>04 · Edit</td><td><span class="side-chip server">Server · SEA</span><br><span class="side-chip git">Skill Git</span></td><td>更新 <code>python-deploy/SKILL.md</code><br>一个 staging commit SHA</td><td>读取 3 条轨迹的 6 个 atoms；总权重 14.5</td></tr>
+        <tr><td>05 · Canary</td><td><span class="side-chip server">Server router</span><br><span class="side-chip client">8 Team Clients</span></td><td>side + commit 的曝光/UX 记录<br>各 Client 本机安装的 <code>SKILL.md</code></td><td>2/8 人 staging；构造的 p=.038 后 merge main</td></tr>
+      </tbody>
+    </table>
+    <p class="algorithm-note">精确文件名只在论文明确给出时列出；AtomTask store 与分流清单的物理文件名没有在论文中定义。</p>
+</div>
+
+---
 
 <div class="xslide dark takeaways" data-slide="takeaways">
 <p class="kicker">The whole loop</p>
-    <h2 id="takeaways-title">四个问题，四个答案</h2>
+    <h2 id="takeaways-title">四个机制，加一个完整案例</h2>
     <div class="takeaway-list">
       <div class="takeaway"><b>01</b><p>采集：Client 把本机原生日志转换为统一会话文本；Team 模式再脱敏上传。</p></div>
       <div class="takeaway"><b>02</b><p>生成：服务端三个 Agent 把 Session 收窄成 Candidate，累计后修改团队 Skill Git 仓库。</p></div>
       <div class="takeaway"><b>03</b><p>评估：Main 与 Staging 同时服务真实任务，UX score 决定候选版本是否胜出。</p></div>
       <div class="takeaway"><b>04</b><p>回注：服务端下发 side + SHA；每台 Client 对齐本地副本并安装到自己的 Agent。</p></div>
+      <div class="takeaway"><b>05</b><p>案例：FastAPI 示例把每一步的 owner、文件产物和版本状态串在一起；其中效果数字是构造值。</p></div>
     </div>
     <p class="question-end">贯穿全链路的主键不是“最新版”，而是一个不可变的 Git commit。</p>
 </div>
@@ -293,6 +433,6 @@ level: 2
       <a class="source-link" href="https://github.com/SkillNerds/xskill/blob/bc9bf941662467ac711523e450968f2677cd230e/paper/xskill_v4.pdf"><strong>XSkill paper v4</strong><span>论文 PDF</span></a>
       <a class="source-link" href="https://github.com/SkillNerds/xskill/tree/bc9bf941662467ac711523e450968f2677cd230e"><strong>XSkill repository</strong><span>源码快照 bc9bf94</span></a>
       <a class="source-link" href="https://xskill.wiki/wiki.html"><strong>XSkill Wiki</strong><span>官方使用与部署文档</span></a>
-      <a class="source-link" href="/paper-reading/2026-08-28/skill/diagrams/xskill-system-map.html"><strong>图表 HTML</strong><span>Deck 使用的 6 张可独立打开图表</span></a>
+      <a class="source-link" href="/paper-reading/2026-08-28/skill/diagrams/xskill-system-map.html"><strong>图表 HTML</strong><span>Deck 使用的 8 张可独立打开图表</span></a>
     </div>
 </div>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XSkill 与其他 Skill 系统的三条设计分界线</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.mono,.index,.colhead,.metric{font-family:"Geist Mono","Noto Sans Mono CJK SC",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.band{fill:#fff;stroke:rgba(45,49,66,.12);stroke-width:1}.band.focal{fill:rgba(235,108,54,.08);stroke:#eb6c36;stroke-width:1.2}.index{font-size:12px;font-weight:600;letter-spacing:1px;fill:#7a8399}.layer{font-size:20px;font-weight:600;fill:#2d3142}.colhead{font-size:8px;font-weight:500;letter-spacing:1px;fill:#7a8399}.landscape{font-size:12px;fill:#4f5d75}.xskill{font-size:16px;font-weight:600;fill:#2d3142}.detail{font-size:12px;fill:#4f5d75}.metric{font-size:12px;fill:#2e5aa8}.note{font:italic 16px "Instrument Serif","Noto Serif SC",serif;fill:#4f5d75}.direction{font:500 8px "Geist Mono",monospace;letter-spacing:1px;fill:#7a8399}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="landscape-title landscape-desc">
+  <title id="landscape-title">XSkill 与其他 Skill 系统的三条设计分界线</title>
+  <desc id="landscape-desc">三层对比展示 XSkill 如何发布原生 SKILL.md 文件、用线上 main 与 staging 金丝雀拒绝差版本，并用 Git commit 与 staging 分支承担可回滚的版本和实验隔离。</desc>
+  <defs>
+    <marker id="landscape-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="landscape-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="landscape-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">PAPER COMPARISON · 11-SYSTEM SURVEY + SKILLCLAW</text>
+  <text class="title" x="48" y="88">差异不在“能不能生成 Skill”，而在怎样交付、淘汰与回滚</text>
+
+  <text class="colhead" x="80" y="136">DESIGN SURFACE</text>
+  <text class="colhead" x="400" y="136">LANDSCAPE BASELINE</text>
+  <text class="colhead" x="848" y="136">XSKILL CHOICE</text>
+  <line x1="360" y1="148" x2="360" y2="584" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <line x1="816" y1="148" x2="816" y2="584" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+
+  <rect class="band" x="64" y="152" width="1152" height="128" rx="8"/>
+  <text class="index" x="80" y="180">01 · DELIVERY</text>
+  <text class="layer" x="80" y="212">谁负责把 Skill 放进上下文？</text>
+  <text class="landscape" x="400" y="188">常见：完整正文注入 system prompt</text>
+  <text class="landscape" x="400" y="216">SkillClaw：MITM proxy 改写请求</text>
+  <text class="landscape" x="400" y="244">OpenSpace：自己的 sub-agent 执行</text>
+  <text class="xskill" x="848" y="188">发布 SKILL.md 到原生目录</text>
+  <text class="detail" x="848" y="216">Claude / Codex / OpenCode 自己加载</text>
+  <text class="metric" x="848" y="244">不接管 loader，也不重写 prompt</text>
+
+  <rect class="band focal" x="64" y="304" width="1152" height="128" rx="8"/>
+  <text class="index" x="80" y="332">02 · EVALUATE / RETIRE</text>
+  <text class="layer" x="80" y="364">坏版本怎样退出？</text>
+  <text class="landscape" x="400" y="340">11 个系统中 8 个“只增不删”</text>
+  <text class="landscape" x="400" y="368">SkillClaw：固定场景的离线 A/B</text>
+  <text class="landscape" x="400" y="396">少数系统按 frontier / 使用率直接删除</text>
+  <text class="xskill" x="848" y="340">真实流量比较 Main / Staging</text>
+  <text class="detail" x="848" y="368">胜出 merge；失败 staging 冻结并保留审计</text>
+  <text class="metric" x="848" y="396">关键边界：freeze 候选 ≠ 淘汰旧 main</text>
+
+  <rect class="band" x="64" y="456" width="1152" height="128" rx="8"/>
+  <text class="index" x="80" y="484">03 · VERSION CONTROL</text>
+  <text class="layer" x="80" y="516">版本只是历史，还是实验单元？</text>
+  <text class="landscape" x="400" y="492">5 个系统没有真正版本控制</text>
+  <text class="landscape" x="400" y="520">OpenSpace：SQLite DAG；AutoSkill：semver patch</text>
+  <text class="landscape" x="400" y="548">EvoSkill：Git branch 用于程序版本</text>
+  <text class="xskill" x="848" y="492">每个版本 = Git commit</text>
+  <text class="detail" x="848" y="520">diff · blame · rollback 直接复用 Git</text>
+  <text class="metric" x="848" y="548">staging branch 同时承担实验隔离</text>
+
+  <line x1="48" y1="632" x2="1232" y2="632" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <text class="note" x="48" y="668">论文最强的组合创新：native artifact + live-traffic canary + functional Git branches。</text>
+</svg>
+</div></body>
+</html>
