@@ -5,6 +5,7 @@ aspectRatio: 16/9
 canvasWidth: 1280
 transition: slide-left
 colorSchema: light
+routerMode: hash
 mdc: true
 ---
 
@@ -49,7 +50,7 @@ mdc: true
 
 ---
 
-<div class="xslide white" data-slide="skill-version">
+<div class="xslide white fit" data-slide="skill-version">
 <p class="kicker">Definition first</p>
     <h2 id="skill-version-title">一个 Skill 是目录；一个版本是这个目录的 Git commit</h2>
     <div class="skill-layout">
@@ -115,7 +116,7 @@ mdc: true
 
 ---
 
-<div class="xslide light" data-slide="modes">
+<div class="xslide light fit" data-slide="modes">
 <p class="kicker">Deployment modes</p>
     <h2 id="modes-title">Standalone 与 Team，只是部署边界不同</h2>
     <div class="grid two">
@@ -136,7 +137,7 @@ mdc: true
 
 ---
 
-<div class="xslide white" data-slide="canary-definition">
+<div class="xslide white fit" data-slide="canary-definition">
 <p class="kicker">The central idea</p>
     <h2 id="canary-definition-title">已有 Skill 的自动更新，默认先进入 Staging</h2>
     <p class="lead">新 Skill 没有旧版本可比较：它在 Baby 完成第一版后发布为 Main。Canary 从已有 Main 的下一次更新开始。</p>
@@ -157,7 +158,7 @@ mdc: true
 
 ---
 
-<div class="xslide light compact" data-slide="ux-score">
+<div class="xslide light compact fit" data-slide="ux-score">
 <p class="kicker">Who scores</p>
     <h2 id="ux-score-title">用户提供真实任务结果；分数由系统生成</h2>
     <p class="lead">当前实现没有星级弹窗。用户照常使用 agent，评分器读取后续交互。</p>
@@ -285,7 +286,7 @@ mdc: true
 
 ---
 
-<div class="xslide light" data-slide="appendix-probe">
+<div class="xslide light fit" data-slide="appendix-probe">
 <p class="appendix-label">APPENDIX C</p>
     <h2 id="appendix-probe-title">缩小输入后出现提交动作，边界质量仍不合格</h2>
     <div class="probe">

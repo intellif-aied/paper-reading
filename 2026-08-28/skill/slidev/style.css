@@ -39,3 +39,22 @@ html,body,#app{width:100%;height:100%;overflow:hidden}
 .slidev-layout .xslide.diagram-slide .diagram{width:100%;height:100%}
 .slidev-layout pre{margin:0}
 .slidev-layout .xslide a{color:inherit}
+
+/* GitHub Pages deck: keep navigation discoverable and reserve a real footer lane on dense pages. */
+#slide-container>.absolute.bottom-0.left-0{right:0;padding:.65rem!important}
+#slide-container>.absolute.bottom-0.left-0>nav{width:max-content;max-width:100%}
+.xskill-jump select{min-width:3.5rem;padding:.3rem .45rem;border:1px solid var(--soft);border-radius:.4rem;background:var(--white);color:var(--ink);font:500 .75rem var(--mono)}
+.slidev-layout .xslide.fit{gap:.7rem;padding:2rem 3rem 4rem}
+.slidev-layout .xslide.fit h2{max-width:28ch;font-size:3rem;line-height:1}
+.slidev-layout .xslide.fit .lead{font-size:1.15rem;line-height:1.35}
+.slidev-layout .xslide.fit .skill-layout{gap:1.5rem}
+.slidev-layout .xslide.fit .file-tree{padding:1.25rem;line-height:1.6}
+.slidev-layout .xslide.fit .version-stack{gap:.55rem}
+.slidev-layout .xslide.fit .version-row{padding:.65rem .9rem}
+.slidev-layout .xslide.fit .mode{min-height:0}
+.slidev-layout .xslide.fit .card,.slidev-layout .xslide.fit .version-card,.slidev-layout .xslide.fit .compare-panel,.slidev-layout .xslide.fit .probe-panel{padding:1rem 1.2rem}
+.slidev-layout .xslide.fit .version-card .share{font-size:2.2rem}
+.slidev-layout .xslide.fit .formula{padding:.7rem .9rem;line-height:1.5}
+.slidev-layout .xslide.fit .code-line{margin:.35rem 0}
+.slidev-layout .xslide.fit .probe-panel .arrow-result{margin:.65rem 0}
+.slidev-layout .xslide.fit .definition,.slidev-layout .xslide.fit .verdict{padding:.65rem .9rem;font-size:1rem}
