@@ -1,6 +1,6 @@
 ---
 theme: default
-title: XSkill：把会话经验变成可试用、可回滚的 Skill
+title: 'Xskill: Team-Level Skill Distillation, Sharing, and Evolution for Coding Agents'
 aspectRatio: 16/9
 canvasWidth: 1280
 transition: slide-left
@@ -10,18 +10,16 @@ hideInToc: true
 ---
 
 <div class="xslide dark cover opening" data-slide="cover">
-<p class="kicker">XSkill · Paper Reading</p>
-    <h1 id="cover-title">把会话经验变成<br><span class="cyan">可试用、可回滚</span>的 Skill</h1>
-    <div class="cover-rule"></div>
-    <p class="subtitle">XSkill 关心的不是“再生成一个 Skill”，而是 Skill 写出来以后如何筛选、评估与回滚。</p>
-    <div class="problem-layout">
-      <p class="problem-copy">哪个经验值得写？<br>新版本是否<span>真的更好</span>？<br>退化时怎样<span>安全回滚</span>？</p>
-      <div class="dark-stats">
-        <div class="dark-stat"><span class="number small">139</span><p>论文记录的一台重度用户机器上的 Skill 文件数</p></div>
-        <div class="dark-stat"><span class="number small">3.3×</span><p><strong>26,448</strong> 个 description 字符，相对 8,000 字符 listing budget 的溢出</p></div>
-      </div>
-    </div>
-    <p class="cover-date">2026-08-28 · paper reading</p>
+  <h1 id="cover-title">Xskill: Team-Level Skill Distillation, Sharing, and Evolution for Coding Agents</h1>
+  <div class="cover-evidence">
+    <div><strong>139</strong><span>重度用户的 Skills</span></div>
+    <b>→</b>
+    <div><strong>26,448</strong><span>description 字符</span></div>
+    <b>÷</b>
+    <div><strong>8,000</strong><span>listing budget</span></div>
+    <b>=</b>
+    <div class="result"><strong>3.3×</strong><span>超出预算</span></div>
+  </div>
 </div>
 
 ---
