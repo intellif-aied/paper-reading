@@ -9,7 +9,7 @@ routerMode: hash
 hideInToc: true
 ---
 
-<div class="xslide dark cover opening fit" data-slide="cover">
+<div class="xslide cover opening fit" data-slide="cover">
   <h1 id="cover-title">Xskill: Team-Level Skill Distillation, Sharing, and Evolution for Coding Agents</h1>
   <div class="cover-evidence">
     <div><strong>139</strong><span>重度用户的 Skills</span></div>
