@@ -28,7 +28,7 @@ hideInToc: true
 <p class="kicker">先说结论 · 贡献</p>
     <h2 id="paper-value-title">论文最有价值的部分</h2>
     <div class="grid three">
-      <article class="card"><span class="feedback-no">01 · 版本级线上实验</span><h3>Git 分支连接真实用户流量</h3><p><code>main</code> 与 <code>staging</code> 并行分发，由线上反馈决定新版晋升或冻结。</p></article>
+      <article class="card"><span class="feedback-no">01 · Skill 版本 A/B 测试</span><h3>用线上任务给新旧版本打分</h3><p>用户分流到 <code>Main</code> 与 <code>Staging</code>；UX score 决定候选版晋升或冻结，Git 只承载版本。</p></article>
       <article class="card"><span class="feedback-no">02 · 团队模式</span><h3>多人会话共同演化团队 Skill</h3><p>成员会话汇入团队证据池；服务端管理版本，并把指定的 <code>side + SHA</code> 分发到各客户端。</p></article>
       <article class="card"><span class="feedback-no">03 · 低侵入集成</span><h3>只管理 Skill 文件，不进入推理链路</h3><p>客户端守护进程只同步各 Agent 的原生 Skill 目录；不改 <code>system prompt</code>，也不拦截模型调用。</p></article>
     </div>
@@ -153,7 +153,7 @@ Ensure: Updated skill repository
 29      end if
 30    end if
 31  end for</code></pre>
-    <p class="algorithm-note"><strong>ux_score：</strong>TaskAgent 从任务完成、用户修正与 Skill 归因提取的 1–10 分；它随 Atom 保存，留给后面的金丝雀版本比较。</p>
+    <p class="algorithm-note"><strong>ux_score：</strong>TaskAgent 提取任务完成、用户修正与 Skill 归因信号，再由固定公式算出 0–10 分；它随 Atom 保存，留给后面的金丝雀版本比较。</p>
 </div>
 
 ---
@@ -307,10 +307,10 @@ level: 2
     <div class="grid four feedback-steps">
       <article class="card"><span class="feedback-no">01</span><h3>记录曝光版本</h3><p>Client 安装时记下 Skill、Main/Staging 与 commit SHA。</p></article>
       <article class="card"><span class="feedback-no">02</span><h3>完成真实任务</h3><p>用户继续使用原来的 Coding Agent，不需要切换版本。</p></article>
-      <article class="card"><span class="feedback-no">03</span><h3>生成 UX score</h3><p>TaskAgent 根据完成情况、修正和结果给出 1–10 分。</p></article>
+      <article class="card"><span class="feedback-no">03</span><h3>提取行为信号</h3><p>TaskAgent 识别任务完成、用户修正与 <code>used_skills</code> 归因，不直接主观打总分。</p></article>
       <article class="card"><span class="feedback-no">04</span><h3>按版本比较</h3><p>分数进入对应 SHA 的账本；样本达到门槛后裁决。</p></article>
     </div>
-    <p class="definition"><strong>UX score：</strong>TaskAgent 根据任务完成、用户修正与 Skill 归因生成 1–10 分；它只用于比较 Main / Staging，不参与生成新版本的证据门槛。</p>
+    <p class="definition"><strong>固定公式：</strong><code>5 × completion + 3 × (1 − min(corrections / 3, 1)) + 2 × attribution</code>。LLM 参与信号提取，最终 0–10 分由规则确定。</p>
 </div>
 
 ---
