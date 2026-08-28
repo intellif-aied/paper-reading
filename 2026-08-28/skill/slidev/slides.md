@@ -6,7 +6,7 @@ canvasWidth: 1280
 transition: slide-left
 colorSchema: light
 routerMode: hash
-mdc: true
+hideInToc: true
 ---
 
 <div class="xslide dark cover" data-slide="cover">
@@ -38,14 +38,12 @@ mdc: true
 <div class="xslide light fit" data-slide="questions">
 <p class="kicker">Talk map</p>
     <h2 id="questions-title">四个问题，正好组成一个闭环</h2>
-    <div class="grid two questions">
-      <article class="card question" v-click><h3>Session 如何采集？</h3><p>从 Agent 原生日志得到统一、可处理的会话副本。</p></article>
-      <article class="card question" v-click><h3>Session 如何生成 Skill？</h3><p>服务端把长会话切成任务证据，累计后改写 Skill。</p></article>
-      <article class="card question" v-click><h3>如何评估 Skill 效果？</h3><p>Main 与 Staging 并存，用真实任务反馈选择下一版。</p></article>
-      <article class="card question" v-click><h3>Skill 如何注入回系统？</h3><p>服务端选择精确版本，客户端安装回本机 Agent。</p></article>
-    </div>
+    <div class="chapter-toc"><Toc :columns="2" :maxDepth="2" /></div>
 </div>
 
+---
+layout: full
+hideInToc: true
 ---
 
 <div class="xslide diagram-slide" data-slide="architecture">
@@ -68,17 +66,25 @@ mdc: true
 </div>
 
 ---
-title: 01 · Session 采集
+layout: section
+class: xskill-section
+title: 01 · Session 如何采集？
 level: 1
+routeAlias: chapter-capture
 ---
 
-<div class="xslide dark chapter" data-slide="chapter-capture" data-chapter="01">
+<div class="chapter-content" data-slide="chapter-capture">
 <p class="kicker">Chapter 01 · Capture</p>
-    <h2>Session 如何进入 XSkill？</h2>
+    <h1>Session 如何进入 XSkill？</h1>
     <p class="lead">先把不同 Agent 的原生日志变成同一种、可追溯的会话文本。</p>
-    <div class="chapter-track"><span class="active">01 采集</span><span>02 生成</span><span>03 评估</span><span>04 回注</span></div>
+    <span class="chapter-number" aria-hidden="true">01</span>
+    <div class="chapter-track"><Link to="chapter-capture" class="active">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link></div>
 </div>
 
+---
+layout: full
+title: 会话采集链路
+level: 2
 ---
 
 <div class="xslide diagram-slide" data-slide="capture">
@@ -86,23 +92,34 @@ level: 1
 </div>
 
 ---
-title: 02 · Skill 生成
+layout: section
+class: xskill-section
+title: 02 · Session 如何生成 Skill？
 level: 1
+routeAlias: chapter-generate
 ---
 
-<div class="xslide dark chapter" data-slide="chapter-generate" data-chapter="02">
+<div class="chapter-content" data-slide="chapter-generate">
 <p class="kicker">Chapter 02 · Generate</p>
-    <h2>Session 如何变成 Skill？</h2>
+    <h1>Session 如何变成 Skill？</h1>
     <p class="lead">三个服务端 Agent 把长会话逐步收窄为候选证据，再提交新的 Git 版本。</p>
-    <div class="chapter-track"><span>01 采集</span><span class="active">02 生成</span><span>03 评估</span><span>04 回注</span></div>
+    <span class="chapter-number" aria-hidden="true">02</span>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate" class="active">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return">04 回注</Link></div>
 </div>
 
+---
+layout: full
+title: 三 Agent 生成流水线
+level: 2
 ---
 
 <div class="xslide diagram-slide" data-slide="distill">
 <iframe class="diagram" src="/paper-reading/2026-08-28/skill/distillation-pipeline.html" title="服务端三个 Agent 把 Session 变成 Skill 版本"></iframe>
 </div>
 
+---
+title: Weightscore 与 UX score
+level: 2
 ---
 
 <div class="xslide light fit" data-slide="two-scores">
@@ -126,23 +143,34 @@ level: 1
 </div>
 
 ---
+layout: full
+title: Skill 版本管理
+level: 2
+---
 
 <div class="xslide diagram-slide" data-slide="version-state">
 <iframe class="diagram" src="/paper-reading/2026-08-28/skill/skill-version-state.html" title="Skill 的 Git 版本管理"></iframe>
 </div>
 
 ---
-title: 03 · Canary 评估
+layout: section
+class: xskill-section
+title: 03 · 如何评估 Skill 效果？
 level: 1
+routeAlias: chapter-evaluate
 ---
 
-<div class="xslide dark chapter" data-slide="chapter-evaluate" data-chapter="03">
+<div class="chapter-content" data-slide="chapter-evaluate">
 <p class="kicker">Chapter 03 · Evaluate</p>
-    <h2>如何判断新版本更好？</h2>
+    <h1>如何判断新版本更好？</h1>
     <p class="lead">Main 与 Staging 同时接受真实任务；归到具体 commit 的 UX score 决定胜负。</p>
-    <div class="chapter-track"><span>01 采集</span><span>02 生成</span><span class="active">03 评估</span><span>04 回注</span></div>
+    <span class="chapter-number" aria-hidden="true">03</span>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate" class="active">03 评估</Link><Link to="chapter-return">04 回注</Link></div>
 </div>
 
+---
+title: Main 与 Staging
+level: 2
 ---
 
 <div class="xslide white fit" data-slide="canary-definition">
@@ -158,11 +186,18 @@ level: 1
 </div>
 
 ---
+layout: full
+title: Canary 反馈闭环
+level: 2
+---
 
 <div class="xslide diagram-slide" data-slide="canary-loop">
 <iframe class="diagram" src="/paper-reading/2026-08-28/skill/canary-feedback-loop.html" title="真实任务反馈驱动 Skill 版本演进"></iframe>
 </div>
 
+---
+title: UX score 的版本归因
+level: 2
 ---
 
 <div class="xslide light fit" data-slide="ux-score">
@@ -178,17 +213,25 @@ level: 1
 </div>
 
 ---
-title: 04 · Skill 回注
+layout: section
+class: xskill-section
+title: 04 · Skill 如何注入回系统？
 level: 1
+routeAlias: chapter-return
 ---
 
-<div class="xslide dark chapter" data-slide="chapter-return" data-chapter="04">
+<div class="chapter-content" data-slide="chapter-return">
 <p class="kicker">Chapter 04 · Distribute</p>
-    <h2>Skill 如何回到用户的 Agent？</h2>
+    <h1>Skill 如何回到用户的 Agent？</h1>
     <p class="lead">服务端只选择版本；每台 Client 自己对齐 commit，并安装到本机 Skill 目录。</p>
-    <div class="chapter-track"><span>01 采集</span><span>02 生成</span><span>03 评估</span><span class="active">04 回注</span></div>
+    <span class="chapter-number" aria-hidden="true">04</span>
+    <div class="chapter-track"><Link to="chapter-capture">01 采集</Link><Link to="chapter-generate">02 生成</Link><Link to="chapter-evaluate">03 评估</Link><Link to="chapter-return" class="active">04 回注</Link></div>
 </div>
 
+---
+layout: full
+title: 客户端回注流程
+level: 2
 ---
 
 <div class="xslide diagram-slide" data-slide="return-flow">
