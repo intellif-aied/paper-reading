@@ -382,7 +382,7 @@ level: 2
 
 <div class="xslide light fit compact" data-slide="candidate-buffer-example">
 <p class="kicker">真实案例 · Evidence buffer</p>
-    <h2 id="candidate-buffer-title"><code>.candidates.yml</code> 暂存还没写进 Skill 的证据</h2>
+    <h2 id="candidate-buffer-title"><code>.candidates.yml</code> 示例</h2>
     <div class="probe">
       <pre class="file-tree">python-deploy/.candidates.yml
 candidates:
