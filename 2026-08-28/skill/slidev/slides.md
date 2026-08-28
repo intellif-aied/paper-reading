@@ -27,11 +27,10 @@ hideInToc: true
 <div class="xslide light fit compact" data-slide="paper-value">
 <p class="kicker">先说结论 · 贡献</p>
     <h2 id="paper-value-title">论文最有价值的部分</h2>
-    <div class="grid two">
-      <article class="card"><span class="feedback-no">01 · 完整生命周期</span><h3>七个环节进入同一套系统</h3><p>采集、蒸馏、去重、发布、评估、回滚和分发。</p></article>
-      <article class="card"><span class="feedback-no">02 · 版本级线上实验</span><h3>Git 分支连接真实用户流量</h3><p><code>main</code> 与 <code>staging</code> 并行分发，由线上反馈决定新版晋升或冻结。</p></article>
-      <article class="card"><span class="feedback-no">03 · 跨 Agent 兼容</span><h3>五种 Agent 共用一份 Skill</h3><p>统一格式接收会话；兼容的 <code>SKILL.md</code> frontmatter 交给各 Agent 原生加载。</p></article>
-      <article class="card"><span class="feedback-no">04 · 团队模式</span><h3>多人会话共同演化团队 Skill</h3><p>成员会话汇入团队证据池；服务端管理版本，并把指定的 <code>side + SHA</code> 分发到各客户端。</p></article>
+    <div class="grid three">
+      <article class="card"><span class="feedback-no">01 · 版本级线上实验</span><h3>Git 分支连接真实用户流量</h3><p><code>main</code> 与 <code>staging</code> 并行分发，由线上反馈决定新版晋升或冻结。</p></article>
+      <article class="card"><span class="feedback-no">02 · 团队模式</span><h3>多人会话共同演化团队 Skill</h3><p>成员会话汇入团队证据池；服务端管理版本，并把指定的 <code>side + SHA</code> 分发到各客户端。</p></article>
+      <article class="card"><span class="feedback-no">03 · 低侵入集成</span><h3>只管理 Skill 文件，不进入推理链路</h3><p>客户端守护进程只同步各 Agent 的原生 Skill 目录；不改 <code>system prompt</code>，也不拦截模型调用。</p></article>
     </div>
 </div>
 
