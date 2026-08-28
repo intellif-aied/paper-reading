@@ -39,12 +39,10 @@ hideInToc: true
 <div class="xslide light fit compact" data-slide="paper-limits">
 <p class="kicker">先说结论 · 边界</p>
     <h2 id="paper-limits-title">论文当前最薄弱的部分</h2>
-    <div class="grid two">
+    <div class="grid three">
       <article class="card"><span class="feedback-no">01 · 参数</span><h3>关键参数仍是默认值</h3><p>UX 权重、证据阈值、最小样本量、流量比例、超时和最小效应量均未校准。</p></article>
-      <article class="card"><span class="feedback-no">02 · 统计</span><h3>AtomTask 不是独立样本</h3><p>金丝雀按用户分组，但检验按任务计数。同一用户的多个任务彼此相关，会夸大有效样本量，让新版更容易“显著胜出”。</p></article>
-      <article class="card"><span class="feedback-no">03 · 金丝雀评估</span><h3>只回答“哪个版本更好”</h3><p><code>staging vs main</code> 不能证明“使用 Skill”优于“不使用 Skill”。</p></article>
-      <article class="card"><span class="feedback-no">04 · 退出</span><h3>Freeze 只退出坏版本</h3><p>失败的 <code>staging</code> 会停止分发；长期低价值的 <code>main</code> Skill 如何淘汰，算法没有定义。</p></article>
-      <article class="card" style="grid-column:1/-1"><span class="feedback-no">05 · 团队差异</span><h3>个人偏好可能污染团队 Skill</h3><p>证据阈值不要求跨用户，新 Skill 首版直接进入 <code>main</code>，金丝雀只看整体均值；系统没有用户级禁用或差异化分发。</p></article>
+      <article class="card"><span class="feedback-no">02 · 用户维度</span><h3>系统没有把用户作为分析单位</h3><p>按 AtomTask 检验会夸大有效样本量；团队均值也可能掩盖个别用户受损，且没有个人禁用或差异化分发。</p></article>
+      <article class="card"><span class="feedback-no">03 · 金丝雀边界</span><h3>只管理候选版本</h3><p><code>Main vs Staging</code> 不能证明 Skill 本身有用；失败时也只能冻结 Staging，无法淘汰低价值的 Main Skill。</p></article>
     </div>
 </div>
 
