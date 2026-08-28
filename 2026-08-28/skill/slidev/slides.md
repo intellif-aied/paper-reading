@@ -59,7 +59,7 @@ hideInToc: true
 
 <div class="xslide light fit" data-slide="objects">
 <p class="kicker">Read the architecture</p>
-    <h2 id="objects-title">五个对象是一条证据链</h2>
+    <h2 id="objects-title">Skill 证据链</h2>
     <div class="object-flow">
       <article class="object"><span class="tag">Native log</span><h3>原生会话日志</h3><p>Claude、Codex 等 Agent 写出的 JSONL 或数据库记录。</p></article>
       <article class="object"><span class="tag">Bridge</span><h3>统一会话文本</h3><p>把不同日志转成相同的 Markdown 结构，供服务端统一读取。</p></article>
