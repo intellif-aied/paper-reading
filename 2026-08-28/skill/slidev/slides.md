@@ -153,7 +153,7 @@ Ensure: Updated skill repository
 29      end if
 30    end if
 31  end for</code></pre>
-    <p class="algorithm-note"><strong>ux_score：</strong>TaskAgent 提取任务完成、用户修正与 Skill 归因信号，再由固定公式算出 0–10 分；它随 Atom 保存，留给后面的金丝雀版本比较。</p>
+    <p class="algorithm-note"><strong>TaskAgent 的评分职责：</strong>LLM / 启发式只提取 <code>completion</code>、<code>corrections</code>、<code>attribution</code>；固定公式产生唯一的 <code>ux_score</code>，不再叠加 LLM Judge 分数。</p>
 </div>
 
 ---
