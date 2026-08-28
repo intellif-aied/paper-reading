@@ -4,3 +4,5 @@ theme: minima
 lang: zh-CN
 markdown: kramdown
 permalink: pretty
+exclude:
+  - 2026-08-28/skill/slidev

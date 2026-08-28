@@ -24,9 +24,22 @@ jobs:
         with:
           source: ./
           destination: ./_site
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: 2026-08-28/skill/slidev/pnpm-lock.yaml
+      - name: Build XSkill Slidev deck
+        run: |
+          pnpm --dir 2026-08-28/skill/slidev install --frozen-lockfile
+          pnpm --dir 2026-08-28/skill/slidev build
+          cp -R 2026-08-28/skill/slidev/dist/. _site/2026-08-28/skill/
       - name: Verify XSkill pages
         run: >-
-          node -e 'const fs=require("fs");const dir="_site/2026-08-28/skill/";const paths=["index.html","report.html","reanalysis.html","narratives.html"];const pages=Object.fromEntries(paths.map(p=>[p,fs.readFileSync(dir+p,"utf8")]));const s=pages["index.html"];const slides=(s.match(/<section class="slide/g)||[]).length;const frames=(s.match(/<iframe class="diagram"/g)||[]).length;const ids=[...s.matchAll(/\sid="([^"]+)"/g)].map(x=>x[1]);const duplicateIds=ids.filter((x,i)=>ids.indexOf(x)!==i);const rootAssets=[...s.matchAll(/(?:src|href)="\/(?!\/)/g)];const required=/三种叙事方案/.test(pages["report.html"])&&[/方案 A/,/方案 B/,/方案 C/].every(x=>x.test(pages["narratives.html"]))&&/Exposure attribution/.test(pages["reanalysis.html"]);console.log({slides,frames,duplicateIds:duplicateIds.length,rootAssets:rootAssets.length,pages:paths.length,required});if(slides!==26||frames<9||duplicateIds.length||rootAssets.length||!required)process.exit(1)'
+          node -e 'const fs=require("fs"),path=require("path");const src=fs.readFileSync("2026-08-28/skill/slidev/slides.md","utf8"),dir="_site/2026-08-28/skill/",index=fs.readFileSync(dir+"index.html","utf8"),paths=["report.html","reanalysis.html","narratives.html"],pages=Object.fromEntries(paths.map(p=>[p,fs.readFileSync(dir+p,"utf8")]));const slides=(src.match(/data-slide="/g)||[]).length,frames=[...src.matchAll(/<iframe class="diagram" src="[^"]*\/([^"\/]+)"/g)].map(x=>x[1]),base="/paper-reading/2026-08-28/skill/",assets=index.includes(base+"assets/"),diagrams=frames.every(f=>fs.existsSync(path.join(dir,f))),required=/slidev:version/.test(index)&&index.includes("id=\"app\"")&&/三种叙事方案/.test(pages["report.html"])&&[/方案 A/,/方案 B/,/方案 C/].every(x=>x.test(pages["narratives.html"]))&&/Exposure attribution/.test(pages["reanalysis.html"]);console.log({slides,frames:frames.length,assets,diagrams,pages:paths.length,required});if(slides!==26||frames.length!==9||!assets||!diagrams||!required)process.exit(1)'
       - uses: actions/upload-pages-artifact@v3
 
   deploy:

@@ -6,7 +6,7 @@ permalink: /2026-08-28/skill/report.html
 
 # XSkill 分享材料
 
-本目录的主入口是 [slide deck](./)。
+本目录的主入口是 [Slidev deck](./)。页面由 [slides.md](https://github.com/intellif-aied/paper-reading/blob/main/2026-08-28/skill/slidev/slides.md) 构建。
 
 - [三种叙事方案](./narratives.html)：生命周期、证据审计、Canary 在线评估。
 - [重新分析笔记](./reanalysis.html)：逐项对照论文、当前源码与官方 Wiki。
