@@ -153,7 +153,6 @@ Ensure: Updated skill repository
 29      end if
 30    end if
 31  end for</code></pre>
-    <p class="algorithm-note"><strong>TaskAgent 的评分职责：</strong>LLM / 启发式只提取 <code>completion</code>、<code>corrections</code>、<code>attribution</code>；固定公式产生唯一的 <code>ux_score</code>，不再叠加 LLM Judge 分数。</p>
 </div>
 
 ---
@@ -201,6 +200,16 @@ level: 2
 
 <div class="xslide diagram-slide" data-slide="distill">
 <iframe class="diagram" src="/paper-reading/2026-08-28/skill/algorithm1-distillation-loop.html" title="Algorithm 1 的三 Agent 蒸馏与跨 Session 证据循环"></iframe>
+</div>
+
+---
+layout: full
+title: TaskAgent 如何计算 UX score
+level: 2
+---
+
+<div class="xslide diagram-slide" data-slide="taskagent-ux-score">
+<iframe class="diagram" src="/paper-reading/2026-08-28/skill/taskagent-ux-score.html" title="TaskAgent 从行为信号计算 UX score 的固定公式"></iframe>
 </div>
 
 ---
@@ -307,10 +316,10 @@ level: 2
     <div class="grid four feedback-steps">
       <article class="card"><span class="feedback-no">01</span><h3>记录曝光版本</h3><p>Client 安装时记下 Skill、Main/Staging 与 commit SHA。</p></article>
       <article class="card"><span class="feedback-no">02</span><h3>完成真实任务</h3><p>用户继续使用原来的 Coding Agent，不需要切换版本。</p></article>
-      <article class="card"><span class="feedback-no">03</span><h3>提取行为信号</h3><p>TaskAgent 识别任务完成、用户修正与 <code>used_skills</code> 归因，不直接主观打总分。</p></article>
+      <article class="card"><span class="feedback-no">03</span><h3>读取 AtomTask 分数</h3><p>TaskAgent 已在切分阶段写入 <code>ux_score</code>，这里不重新打分。</p></article>
       <article class="card"><span class="feedback-no">04</span><h3>按版本比较</h3><p>分数进入对应 SHA 的账本；样本达到门槛后裁决。</p></article>
     </div>
-    <p class="definition"><strong>固定公式：</strong><code>5 × completion + 3 × (1 − min(corrections / 3, 1)) + 2 × attribution</code>。LLM 参与信号提取，最终 0–10 分由规则确定。</p>
+    <p class="definition"><strong>这里只做版本归因：</strong>根据 Client 的 <code>side + commit SHA</code>，把 AtomTask 已有的 <code>ux_score</code> 计入 Main 或 Staging。</p>
 </div>
 
 ---

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskAgent 如何计算 UX score</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f5f5f5}body{display:grid;place-items:center;font-family:Geist,"Noto Sans SC","Microsoft YaHei",sans-serif}.frame{width:100%;overflow:auto}svg{display:block;width:100%;min-width:900px;height:auto}.title{font:400 40px "Instrument Serif","Noto Serif SC",serif;fill:#2d3142}.eyebrow,.tag,.mono,.edge{font-family:"Geist Mono","Noto Sans Mono CJK SC",monospace}.eyebrow{font-size:12px;letter-spacing:2px;fill:#4f5d75}.lead{font-size:16px;fill:#4f5d75}.node{fill:#fff;stroke:#bfc0c0;stroke-width:1}.group{fill:rgba(45,49,66,.025);stroke:#4f5d75;stroke-width:1}.signal{fill:#fff;stroke:rgba(45,49,66,.22);stroke-width:1}.focal{fill:rgba(235,108,54,.08);stroke:#eb6c36;stroke-width:1.2}.optional{fill:rgba(45,49,66,.02);stroke:rgba(45,49,66,.25);stroke-width:1;stroke-dasharray:4 4}.tag{font-size:8px;font-weight:500;letter-spacing:1px;fill:#4f5d75}.name{font-size:20px;font-weight:600;fill:#2d3142}.signal-name{font-size:16px;font-weight:600;fill:#2d3142}.copy{font-size:12px;fill:#4f5d75}.code{font:500 12px "Geist Mono",monospace;fill:#2e5aa8}.formula{font:500 16px "Geist Mono",monospace;fill:#2d3142}.score{font:600 40px "Geist Mono",monospace;fill:#2d3142}.flow{fill:none;stroke:#4f5d75;stroke-width:1.2;marker-end:url(#ux-arrow)}.flow-accent{fill:none;stroke:#eb6c36;stroke-width:1.2;marker-end:url(#ux-arrow-accent)}.edge{font-size:8px;letter-spacing:1px;fill:#7a8399}.aside{font:italic 16px "Instrument Serif","Noto Serif SC",serif;fill:#4f5d75}
+  </style>
+</head>
+<body><div class="frame">
+<svg viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="taskagent-ux-title taskagent-ux-desc">
+  <title id="taskagent-ux-title">TaskAgent 如何计算 UX score</title>
+  <desc id="taskagent-ux-desc">TaskAgent 从 AtomTask 轨迹中提取任务完成、用户纠正和 Skill 归因三个行为信号，再用固定公式得到唯一的零到十分 UX score；协议没有额外的 LLM Judge 分数。</desc>
+  <defs>
+    <marker id="ux-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f5d75"/></marker>
+    <marker id="ux-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#eb6c36"/></marker>
+    <marker id="ux-arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2e5aa8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#f5f5f5"/>
+  <text class="eyebrow" x="48" y="44">TASKAGENT · BEHAVIORAL UX SCORING</text>
+  <text class="title" x="48" y="88">先提取行为信号，再用固定公式计算 UX score</text>
+  <text class="lead" x="48" y="120">LLM / 启发式参与信号识别，但不直接主观给出最终分数。</text>
+
+  <!-- Connectors first -->
+  <path class="flow" d="M248 352 H296"/>
+  <path class="flow-accent" d="M668 352 H716"/>
+  <path class="flow" d="M1024 352 H1072"/>
+
+  <!-- Arrow labels: masks keep a visible gap above each connector -->
+  <rect x="252" y="324" width="40" height="12" rx="2" fill="#f5f5f5"/><text class="edge" x="272" y="332" text-anchor="middle">READ</text>
+  <rect x="672" y="324" width="40" height="12" rx="2" fill="#f5f5f5"/><text class="edge" x="692" y="332" text-anchor="middle">SIGNALS</text>
+  <rect x="1028" y="324" width="40" height="12" rx="2" fill="#f5f5f5"/><text class="edge" x="1048" y="332" text-anchor="middle">STORE</text>
+
+  <rect class="node" x="48" y="280" width="200" height="144" rx="8"/>
+  <text class="tag" x="64" y="304">INPUT</text>
+  <text class="name" x="64" y="336">AtomTask 轨迹</text>
+  <text class="copy" x="64" y="364">对话文本与任务边界</text>
+  <text class="code" x="64" y="392">raw_segment</text>
+  <text class="code" x="64" y="412">used_skills</text>
+
+  <rect class="group" x="296" y="172" width="372" height="360" rx="8"/>
+  <text class="tag" x="312" y="196">TASKAGENT · SIGNAL EXTRACTION</text>
+
+  <rect class="signal" x="316" y="220" width="332" height="80" rx="8"/>
+  <text class="signal-name" x="332" y="248">completion ∈ {0, 1}</text>
+  <text class="copy" x="332" y="272">意图完成 vs. 取消、放弃或异常结束</text>
+  <text class="code" x="332" y="292">自然转场 / completion evidence</text>
+
+  <rect class="signal" x="316" y="320" width="332" height="80" rx="8"/>
+  <text class="signal-name" x="332" y="348">corrections ∈ ℤ≥0</text>
+  <text class="copy" x="332" y="372">识别否定、改向与 no / wrong / redo</text>
+  <text class="code" x="332" y="392">计数到 3 后贡献封顶</text>
+
+  <rect class="signal" x="316" y="420" width="332" height="80" rx="8"/>
+  <text class="signal-name" x="332" y="448">attribution ∈ {0, 1}</text>
+  <text class="copy" x="332" y="472">本任务是否自报使用了 Skill</text>
+  <text class="code" x="332" y="492">读取 used_skills 字段</text>
+
+  <rect class="focal" x="716" y="236" width="308" height="216" rx="8"/>
+  <text class="tag" x="732" y="260">DETERMINISTIC AGGREGATION</text>
+  <text class="name" x="732" y="292">固定 UX 评分函数</text>
+  <text class="formula" x="732" y="328">5 × completion</text>
+  <text class="formula" x="732" y="360">+ 3 × (1 − min(corrections / 3, 1))</text>
+  <text class="formula" x="732" y="392">+ 2 × attribution</text>
+  <line x1="732" y1="412" x2="1008" y2="412" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <text class="copy" x="732" y="436">例：完成 + 1 次纠正 + 使用 Skill = 5 + 2 + 2 = 9</text>
+
+  <rect class="node" x="1072" y="280" width="160" height="144" rx="8"/>
+  <text class="tag" x="1088" y="304">OUTPUT</text>
+  <text class="mono score" x="1152" y="360" text-anchor="middle">9</text>
+  <text class="name" x="1152" y="392" text-anchor="middle">ux_score</text>
+  <text class="copy" x="1152" y="412" text-anchor="middle">范围 0–10</text>
+
+  <rect class="optional" x="716" y="484" width="516" height="68" rx="8"/>
+  <text class="tag" x="732" y="508">NOT IN THE PROTOCOL</text>
+  <text class="signal-name" x="732" y="536">没有第二路 LLM Judge 分数，也没有两种评分的加权或复核</text>
+
+  <line x1="48" y1="632" x2="1232" y2="632" stroke="rgba(45,49,66,.12)" stroke-width="1"/>
+  <text class="aside" x="48" y="668">可复现的是聚合公式；仍待验证的是三个输入信号的识别误差，以及 5 / 3 / 2 权重是否真的对应用户满意度。</text>
+</svg>
+</div></body>
+</html>
